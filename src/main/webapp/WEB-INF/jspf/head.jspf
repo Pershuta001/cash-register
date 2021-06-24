@@ -1,0 +1,22 @@
+<%@ include file="/WEB-INF/jspf/directive/page.jspf" %>
+<%@ include file="/WEB-INF/jspf/directive/taglibs.jspf" %>
+<head>
+    <title>
+        <fmt:message key="title"/>
+    </title>
+
+    <%--===========================================================================
+    Add Bootstrap link
+    ===========================================================================--%>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+          crossorigin="anonymous">
+
+<%--===========================================================================
+    If you define http-equiv attribute, set the content type and the charset the same
+    as you set them in a page directive.
+    ===========================================================================--%>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+</head>

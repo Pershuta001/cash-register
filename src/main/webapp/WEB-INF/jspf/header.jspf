@@ -1,0 +1,63 @@
+<%@ include file="directive/page.jspf"%>
+<%@ include file="directive/taglibs.jspf"%>
+
+<%
+    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+%>
+<nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-between">
+    <a class="navbar-brand" href="#">Cash register</a>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+            <c:if test="${not empty sessionScope.role}">
+                <c:choose>
+                    <c:when test="${sessionScope.role == 'CASHIER' }">
+                        <a class="nav-item nav-link active" href="${pageContext.request.contextPath}/app/receipt/create">
+                            <fmt:message key="header_jspf.cashier.create"/>
+                        </a>
+                    </c:when>
+                    <c:when test="${sessionScope.role == 'CASHIER_MANAGER' }">
+                        <a class="nav-item nav-link active" href="${pageContext.request.contextPath}/app/login">
+                            <fmt:message key="manager.cancel.receipt"/>
+                        </a>
+                        <a class="nav-item nav-link active" href="${pageContext.request.contextPath}/app/manager/x-report">
+                            <fmt:message key="manager.xreport.receipt"/>
+                        </a>
+                        <a class="nav-item nav-link active" href="${pageContext.request.contextPath}/app/login">
+                            <fmt:message key="manager.zreport.receipt"/>
+                        </a>
+                    </c:when>
+                    <c:when test="${sessionScope.role == 'COMMODITY_EXPERT' }">
+                        <a class="nav-item nav-link active" href="${pageContext.request.contextPath}/app/product/create">
+                            <fmt:message key="expert.product.create"/>
+                        </a>
+                        <a class="nav-item nav-link active" href="${pageContext.request.contextPath}/app/product/all?page=1">
+                            <fmt:message key="expert.product.update"/>
+                        </a>
+                    </c:when>
+                </c:choose>
+            </c:if>
+
+            <c:if test="${not empty sessionScope.role and sessionScope.role != 'GUEST'}">
+                <a class="nav-item nav-link active" href="${pageContext.request.contextPath}/app/logout">
+                    <fmt:message key="logout"/>
+                </a>
+            </c:if>
+
+            <c:if test="${empty sessionScope.role or sessionScope.role == 'GUEST'}">
+                <a class="nav-item nav-link active" href="${pageContext.request.contextPath}/app/login">
+                    <fmt:message key="login"/>
+                </a>
+                <a class="nav-item nav-link active" href="${pageContext.request.contextPath}/app/registration">
+                    <fmt:message key="register"/>
+                </a>
+            </c:if>
+            <a class="nav-item nav-link active" href="?sessionLocale=en">
+                <fmt:message key="lang.en"/>
+            </a>
+            <a class="nav-item nav-link active" href="?sessionLocale=ru">
+                <fmt:message key="lang.ua"/>
+            </a>
+
+        </div>
+    </div>
+</nav>
