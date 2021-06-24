@@ -1,5 +1,6 @@
 package com.example.cash_register.model.dao.impl;
 
+import com.example.cash_register.model.dao.DaoFactory;
 import com.example.cash_register.model.dao.ProductDao;
 import com.example.cash_register.model.dao.mapper.ProductMapper;
 import com.example.cash_register.model.entity.Product;
@@ -8,6 +9,8 @@ import com.example.cash_register.utils.Constants;
 import java.sql.*;
 import java.util.List;
 import java.util.Optional;
+
+import static java.sql.Types.*;
 
 public class JDBCProductDao implements ProductDao {
 
@@ -32,34 +35,34 @@ public class JDBCProductDao implements ProductDao {
     private final static String FIND_ALL_SORT_BY_PRICE_FROM_CHEEP =
             "SELECT * " +
                     "FROM products " +
-                    "ORDER BY price limit 10 OFFSET ?";
+                    "ORDER BY price limit ? OFFSET ?";
 
     private final static String FIND_ALL_SORT_BY_PRICE_FROM_EXPENSIVE =
             "SELECT * " +
                     "FROM products " +
-                    "ORDER BY price DESC limit 10 OFFSET ?";
+                    "ORDER BY price DESC limit ? OFFSET ?";
 
     private final static String FIND_ALL_SORT_BY_NAME =
             "SELECT * " +
                     "FROM products " +
-                    "ORDER BY name limit 10 OFFSET ?";
+                    "ORDER BY name limit ? OFFSET ?";
 
     private final static String FIND_ALL_SORT_BY_NAME_DESC =
             "SELECT * " +
                     "FROM products " +
-                    "ORDER BY name DESC limit 10 OFFSET ?";
+                    "ORDER BY name DESC limit ? OFFSET ?";
 
     private final static String FIND_ALL_SORT_BY_QUANTITY =
             "SELECT * " +
                     "FROM products " +
                     "WHERE quantity IS NOT NULL " +
-                    "ORDER BY quantity limit 10 OFFSET ?";
+                    "ORDER BY quantity limit ? OFFSET ?";
 
     private final static String FIND_ALL_SORT_BY_WEIGHT =
             "SELECT * " +
                     "FROM products " +
                     "WHERE weight IS NOT NULL " +
-                    "ORDER BY weight limit 10 OFFSET ?";
+                    "ORDER BY weight limit ? OFFSET ?";
 
     private final static String UPDATE_PRODUCT_QUANTITY =
             "        UPDATE products " +
@@ -81,30 +84,28 @@ public class JDBCProductDao implements ProductDao {
     @Override
     public void create(Product entity) {
         PreparedStatement stmt;
-
+        ResultSet resultSet;
         try {
             stmt = connection.prepareStatement(CREATE_PRODUCT, Statement.RETURN_GENERATED_KEYS);
-            connection.setAutoCommit(false);
             stmt.setString(1, entity.getName());
             stmt.setDouble(2, entity.getPrice());
             stmt.setBoolean(4, entity.isByWeight());
             if (entity.isByWeight()) {
-                stmt.setNull(3, java.sql.Types.NULL);
+                stmt.setNull(3, NULL);
                 stmt.setDouble(5, entity.getAvailable_weight());
             } else {
-                stmt.setNull(5, java.sql.Types.NULL);
+                stmt.setNull(5, NULL);
                 stmt.setInt(3, entity.getAvailable_quantity());
             }
             stmt.executeUpdate();
-            DBUtils.commit(connection);
 
-            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    entity.setId(generatedKeys.getLong(1));
-                } else {
-                    throw new SQLException("Creating product failed, no ID obtained.");
-                }
+            resultSet = stmt.getGeneratedKeys();
+            if (resultSet.next()) {
+                entity.setId(resultSet.getLong(1));
+            } else {
+                throw new SQLException("Creating product failed, no ID obtained.");
             }
+
         } catch (SQLException ex) {
             DBUtils.rollback(connection);
         } finally {
@@ -161,7 +162,8 @@ public class JDBCProductDao implements ProductDao {
                 default:
                     stmt = connection.prepareStatement(FIND_ALL_BY_PAGE);
             }
-            stmt.setInt(1, (page - 1) * 10);
+            stmt.setInt(1, Constants.PAGE_SIZE);
+            stmt.setInt(2, (page - 1) * Constants.PAGE_SIZE);
             rs = stmt.executeQuery();
             res = mapper.extractListFromResultSet(rs);
         } catch (SQLException throwables) {
@@ -275,6 +277,5 @@ public class JDBCProductDao implements ProductDao {
             throw new RuntimeException(e);
         }
     }
-
 
 }

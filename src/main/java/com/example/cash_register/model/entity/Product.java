@@ -81,6 +81,7 @@ public class Product extends Entity {
         this.price = price;
     }
 
+
     public static class Builder {
         private Product product;
 

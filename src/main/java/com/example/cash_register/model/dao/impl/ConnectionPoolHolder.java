@@ -19,9 +19,9 @@ public class ConnectionPoolHolder {
                         e.printStackTrace();
                     }
                     BasicDataSource ds = new BasicDataSource();
-                    ds.setUrl("jdbc:postgresql://localhost:5432/registerBD");
+                    ds.setUrl("jdbc:postgresql://localhost:5432/cash-register");
                     ds.setUsername("postgres");
-                    ds.setPassword("oeuhr[erfoierj");
+                    ds.setPassword("postgres");
                     ds.setMinIdle(5);
                     ds.setMaxIdle(10);
                     ds.setMaxOpenPreparedStatements(100);

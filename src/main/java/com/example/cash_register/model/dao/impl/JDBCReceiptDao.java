@@ -57,9 +57,10 @@ public class JDBCReceiptDao implements ReceiptDao {
                     "WHERE r.id = ?";
 
     private final static String GET_X_REPORT_BY_PRODUCTS =
-            "SELECT product_id, p.name, p.price,p.byweight, sum(amount) as quantity, sum(p.weight) as weight " +
-                    "from receipt_product INNER JOIN products p on p.id = receipt_product.product_id " +
-                    "group by product_id, p.name, p.price ,p.byweight " +
+            "SELECT product_id, p.name, p.price, p.byweight, sum(rp.amount) as quantity, sum(rp.weight) as weight " +
+                    "from receipt_product rp " +
+                    "         INNER JOIN products p on p.id = rp.product_id " +
+                    "group by product_id, p.name, p.price, p.byweight" +
                     " limit ? OFFSET ?";
 
     private final static String GET_ALL_RECEIPTS =
@@ -243,7 +244,7 @@ public class JDBCReceiptDao implements ReceiptDao {
         try {
             stmt = connection.prepareStatement(GET_ALL_RECEIPTS);
             stmt.setInt(1, Constants.PAGE_SIZE);
-            stmt.setInt(2, Constants.PAGE_SIZE*(page-1));
+            stmt.setInt(2, Constants.PAGE_SIZE * (page - 1));
             rs = stmt.executeQuery();
             ReceiptMapper mapper = new ReceiptMapper();
             res = mapper.extractListFromResultSet(rs);

@@ -71,14 +71,45 @@ public class User extends Entity {
         this.role = role;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "login='" + login + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
-                ", surname='" + surname + '\'' +
-                ", role=" + role +
-                '}';
+    public static class Builder {
+
+        private final User user;
+
+        public Builder() {
+            this.user = new User();
+        }
+
+        public User.Builder id(Long id) {
+            user.setId(id);
+            return this;
+        }
+
+        public User.Builder login(String login) {
+            user.login = login;
+            return this;
+        }
+
+        public User.Builder password(String password) {
+            user.password = password;
+            return this;
+        }
+
+        public User.Builder name(String name) {
+            user.name = name;
+            return this;
+        }
+
+        public User.Builder surname(String surname) {
+            user.surname = surname;
+            return this;
+        }
+
+        public User.Builder role(Roles role) {
+            user.role = role;
+            return this;
+        }
+        public User build() {
+            return user;
+        }
     }
 }

@@ -48,4 +48,34 @@ public class Receipt extends Entity {
     public void setDate(Date date) {
         this.date = date;
     }
+
+    public static class Builder{
+
+        private final Receipt receipt;
+
+        public Builder() {
+            receipt = new Receipt();
+        }
+
+        public Receipt.Builder id(Long id) {
+            receipt.setId(id);
+            return this;
+        }
+        public Receipt.Builder cashierId(Long id) {
+            receipt.cashierId = id;
+            return this;
+        }
+        public Receipt.Builder date(Date date) {
+            receipt.date = date;
+            return this;
+        }
+        public Receipt.Builder productsInReceipt(Map<Product, Double> productsInReceipt) {
+            receipt.productsInReceipt = productsInReceipt;
+            return this;
+        }
+
+        public Receipt build(){
+            return receipt;
+        } 
+    }
 }
