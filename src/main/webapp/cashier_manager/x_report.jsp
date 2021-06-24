@@ -53,7 +53,7 @@
                     out.println("<td>" + product.getName() + "</td>");
                     out.println("<td>" + CurrencyConvertor.convertToUSD(product.getPrice()) + "</td>");
                     out.println("<td>" + (product.isByWeight() ? product.getAvailable_weight() + " kg" : product.getAvailable_quantity()) + "</td>");
-                    out.println("<td>" + CurrencyConvertor.convertToUSD(product.getPrice() * (product.isByWeight() ? product.getAvailable_weight() : product.getAvailable_quantity())) + "</td>");
+                 //   out.println("<td>" + CurrencyConvertor.convertToUSD(product.getPrice() * (product.isByWeight() ? product.getAvailable_weight() : product.getAvailable_quantity())) + "</td>");
 
                 }
             }
