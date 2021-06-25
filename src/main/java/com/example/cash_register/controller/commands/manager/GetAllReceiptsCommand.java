@@ -1,11 +1,12 @@
-package com.example.cash_register.controller.commands;
+package com.example.cash_register.controller.commands.manager;
 
+import com.example.cash_register.controller.commands.Command;
 import com.example.cash_register.model.service.ProductService;
 import com.example.cash_register.model.service.ReceiptService;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class GetAllReceiptsCommand implements Command{
+public class GetAllReceiptsCommand implements Command {
     private final ReceiptService receiptService;
 
     public GetAllReceiptsCommand(ReceiptService receiptService) {

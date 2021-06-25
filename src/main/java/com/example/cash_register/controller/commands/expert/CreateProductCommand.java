@@ -1,5 +1,6 @@
-package com.example.cash_register.controller.commands;
+package com.example.cash_register.controller.commands.expert;
 
+import com.example.cash_register.controller.commands.Command;
 import com.example.cash_register.model.dao.mapper.ProductMapper;
 import com.example.cash_register.model.entity.Product;
 import com.example.cash_register.model.service.ProductService;

@@ -1,5 +1,6 @@
-package com.example.cash_register.controller.commands;
+package com.example.cash_register.controller.commands.cashier;
 
+import com.example.cash_register.controller.commands.Command;
 import com.example.cash_register.model.entity.Receipt;
 import com.example.cash_register.model.service.ReceiptService;
 

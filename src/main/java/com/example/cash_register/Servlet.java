@@ -1,6 +1,15 @@
 package com.example.cash_register;
 
 import com.example.cash_register.controller.commands.*;
+import com.example.cash_register.controller.commands.auth.LoginCommand;
+import com.example.cash_register.controller.commands.auth.LogoutCommand;
+import com.example.cash_register.controller.commands.cashier.ConfirmReceiptCommand;
+import com.example.cash_register.controller.commands.cashier.CreateReceiptCommand;
+import com.example.cash_register.controller.commands.expert.CreateProductCommand;
+import com.example.cash_register.controller.commands.expert.DeleteProductCommand;
+import com.example.cash_register.controller.commands.expert.GetAllProductsCommand;
+import com.example.cash_register.controller.commands.expert.UpdateProductCommand;
+import com.example.cash_register.controller.commands.manager.XReportProductCommand;
 import com.example.cash_register.model.service.ProductService;
 import com.example.cash_register.model.service.ReceiptService;
 import com.example.cash_register.model.service.UserService;
@@ -27,7 +36,7 @@ public class Servlet extends HttpServlet {
         commands.put("product/create", new CreateProductCommand(new ProductService()));
         commands.put("product/all", new GetAllProductsCommand(new ProductService()));
         commands.put("product/delete", new DeleteProductCommand(new ProductService()));
-        commands.put("product/update", new UpdateProductAmountCommand(new ProductService()));
+        commands.put("product/update", new UpdateProductCommand(new ProductService()));
 
         commands.put("receipt/create", new CreateReceiptCommand(new ReceiptService()));
         commands.put("receipt/confirm", new ConfirmReceiptCommand(new ReceiptService()));

@@ -1,5 +1,7 @@
-package com.example.cash_register.controller.commands;
+package com.example.cash_register.controller.commands.auth;
 
+import com.example.cash_register.controller.commands.Command;
+import com.example.cash_register.controller.commands.CommandUtility;
 import com.example.cash_register.model.entity.User;
 import com.example.cash_register.model.enums.Roles;
 import com.example.cash_register.model.service.UserService;

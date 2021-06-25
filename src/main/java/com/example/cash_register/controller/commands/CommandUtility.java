@@ -8,20 +8,20 @@ import java.util.HashSet;
 
 public class CommandUtility {
 
-    static void setUserRoleId(HttpServletRequest request,
+    public static void setUserRoleId(HttpServletRequest request,
                                  Roles role, Long id) {
         HttpSession session = request.getSession();
         session.setAttribute("role", role);
         session.setAttribute("id", id);
     }
 
-    static void removeUserRole(HttpServletRequest request) {
+    public static void removeUserRole(HttpServletRequest request) {
         HttpSession session = request.getSession();
         session.removeAttribute("id");
         session.setAttribute("role", Roles.GUEST);
     }
 
-    static boolean checkUserIsLogged(HttpServletRequest request, String userName) {
+    public static boolean checkUserIsLogged(HttpServletRequest request, String userName) {
         @SuppressWarnings("unchecked")
         HashSet<String> loggedUsers = (HashSet<String>) request.getSession().getServletContext()
                 .getAttribute("loggedUsers");
