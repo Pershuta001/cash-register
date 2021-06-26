@@ -1,5 +1,7 @@
 package com.example.cash_register.model.entity;
 
+import com.example.cash_register.utils.CurrencyConvertor;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,11 +51,11 @@ public class Receipt extends Entity {
         this.date = date;
     }
 
-    public Double getTotalPrice(){
-        return productsInReceipt.entrySet()
+    public String getTotalPrice(){
+        return CurrencyConvertor.convertToUSD(productsInReceipt.entrySet()
                 .stream()
                 .map(p -> p.getKey().getPrice()*p.getValue())
-                .reduce(0.,Double::sum);
+                .reduce(0.,Double::sum));
     }
 
     public static class Builder{

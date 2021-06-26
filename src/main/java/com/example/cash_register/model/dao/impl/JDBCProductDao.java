@@ -19,6 +19,7 @@ public class JDBCProductDao implements ProductDao {
     private static final String FIND_ALL_BY_ID =
             "SELECT * FROM products Order By id limit ? OFFSET ?";
 
+
     private static final String FIND_ALL_BY_ID_REVERSE =
             "SELECT * FROM products Order By id DESC limit ? OFFSET ?";
 
@@ -31,8 +32,8 @@ public class JDBCProductDao implements ProductDao {
     private final static String FIND_BY_ID =
             "SELECT * FROM products WHERE id = ?";
 
-    private final static String FIND_BY_NAME =
-            "SELECT * FROM products WHERE name = ?";
+    private final static String FIND_BY_NAME_OR_ID =
+            "SELECT * FROM products WHERE name = ? OR id = ?";
 
     private final static String FIND_ALL_SORT_BY_PRICE_FROM_CHEEP =
             "SELECT * " +
@@ -96,10 +97,10 @@ public class JDBCProductDao implements ProductDao {
 
             if (entity.isByWeight()) {
                 stmt.setNull(3, NULL);
-                stmt.setDouble(5, entity.getAvailable_weight());
+                stmt.setDouble(5, entity.getAvailableWeight());
             } else {
                 stmt.setNull(5, NULL);
-                stmt.setInt(3, entity.getAvailable_quantity());
+                stmt.setInt(3, entity.getAvailableQuantity());
             }
             stmt.executeUpdate();
             connection.commit();
@@ -255,15 +256,20 @@ public class JDBCProductDao implements ProductDao {
     }
 
     @Override
-    public Optional<Product> findByName(String name) {
+    public Optional<Product> findByNameOrId(String name) {
         PreparedStatement stmt;
         ResultSet rs;
         ProductMapper mapper = new ProductMapper();
         Optional<Product> res = Optional.empty();
         try {
-            stmt = connection.prepareStatement(FIND_BY_NAME);
+            stmt = connection.prepareStatement(FIND_BY_NAME_OR_ID);
             stmt.setString(1, name);
-
+            try {
+                long id = Long.parseLong(name);
+                stmt.setLong(2, id);
+            } catch (NumberFormatException e) {
+                stmt.setLong(2, 0);
+            }
             rs = stmt.executeQuery();
             if (rs.next()) {
                 res = Optional.of(mapper.extractFromResultSet(rs));

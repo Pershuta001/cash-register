@@ -54,7 +54,7 @@ public class ProductService {
     public Optional<Product> findByName(String name) {
         Optional<Product> product;
         try (ProductDao productDao = repository.createProductDao()) {
-            product = productDao.findByName(name);
+            product = productDao.findByNameOrId(name);
         }
         return product;
     }

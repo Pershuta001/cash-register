@@ -1,11 +1,3 @@
-<%@ page import="com.example.cash_register.model.entity.Product" %>
-<%@ page import="java.util.ResourceBundle" %>
-<%@ page import="java.util.Locale" %>
-<%@ page import="com.example.cash_register.model.service.ProductService" %>
-<%@ page import="java.util.List" %>
-<%@ page import="com.example.cash_register.utils.CurrencyConvertor" %>
-<%@ page import="com.example.cash_register.model.entity.Receipt" %>
-<%@ page import="java.util.Map" %>
 <%@ include file="/WEB-INF/jspf/directive/page.jspf" %>
 <%@ include file="/WEB-INF/jspf/directive/taglibs.jspf" %>
 
@@ -17,7 +9,8 @@
 <%@include file="/WEB-INF/jspf/head.jspf" %>
 
 <body>
-
+<jsp:useBean id="convertor"
+             class="com.example.cash_register.utils.CurrencyConvertor"/>
 <%@include file="/WEB-INF/jspf/header.jspf" %>
 
 <h1><fmt:message key="page.product.products.label"/></h1>
@@ -35,7 +28,7 @@
         <c:if test="${not empty requestScope.receipt}">
 
             <form method="post"
-                  action="${pageContext.request.contextPath}/app/receipt/create?receiptId=${requestScope.receipt.id}">
+                  action="${pageContext.request.contextPath}/app/receipt/add/product?receiptId=${requestScope.receipt.id}">
                 <div>
                     <label for="name">
                         <fmt:message key="product.nameorid.label"/>
@@ -43,9 +36,16 @@
                     <input type="text"
                            id="name"
                            name="name"
+                           pattern="[a-zA-Zа-яА-Я0-9]{1,30}"
                            required
                     >
                 </div>
+                <c:if test="${not empty requestScope.nameError}">
+                    <div style="color: red">
+                            ${requestScope.nameError}
+                    </div>
+                </c:if>
+
                 <div>
                     <label for="amount">
                         <fmt:message key="product.amount.label"/>
@@ -57,7 +57,13 @@
                            pattern="[0-9]{1,5}[\.]?[0-9]{0,2}"
                            required
                     >
+
                 </div>
+                <c:if test="${not empty requestScope.amountError}">
+                    <div style="color: red">
+                            ${requestScope.amountError}
+                    </div>
+                </c:if>
                 <div>
                     <button type="submit">
                         <fmt:message key="cashier.add"/>
@@ -73,29 +79,51 @@
             <table cellspacing="2" border="1" cellpadding="5" width="600" id="table">
                 <thead>
                 <tr>
-                    <th>Id</th>
-                    <th>Name</th>
-                    <th>Price</th>
-                    <th>Amount</th>
+                    <th><fmt:message key="product.id"/></th>
+                    <th><fmt:message key="product.name.label"/></th>
+                    <th><fmt:message key="product.price"/></th>
+                    <th><fmt:message key="product.amount.label"/></th>
+                    <th><fmt:message key="product.cost"/></th>
                 </tr>
                 </thead>
                 <tbody>
+                <tr>
+                    <c:forEach items="${requestScope.receipt.productsInReceipt.entrySet()}" var="product">
+                        <td>${product.getKey().id}</td>
+                        <td>${product.getKey().name}</td>
+                        <td>
+                                ${convertor.convertToUSD(product.getKey().price)}
+                            <c:if test="${product.getKey().byWeight}">
+                                <fmt:message key="product.perKg"/>
+                            </c:if>
+                            <c:if test="${!product.getKey().byWeight}">
+                                <fmt:message key="product.perItem"/>
+                            </c:if>
+                        </td>
+                        <td>
+                            <form method="post"
+                                  action="">
+                                <input type="text"
+                                       name="amount"
+                                        <c:if test="${product.getKey().byWeight == true}">
+                                            pattern="[0-9]{1,5}[\.]?[0-9]{0,3}"
 
-                <%
+                                        </c:if>
+                                        <c:if test="${product.getKey().byWeight == false}">
+                                            pattern="[0-9]{1,5}"
+                                        </c:if>
+                                       placeholder="${convertor.amountFormat(product.getValue())}"
+                                       required
+                                />
+                                <button type="submit">
+                                    <fmt:message key="update"/>
+                                </button>
+                            </form>
+                        </td>
 
-                    Receipt receipt = (Receipt) request.getAttribute("receipt");
-
-                    for (Map.Entry<Product, Double> product : receipt.getProductsInReceipt().entrySet()) {
-                        Product prod = product.getKey();
-                        out.println("<tr>");
-                        out.println("<td> " + prod.getId() + "</td>");
-                        out.println("<td>" + prod.getName() + "</td>");
-                        out.println("<td>" + CurrencyConvertor.convertToUSD(prod.getPrice()) + "</td>");
-                        out.println("<td>" + product.getValue() + (prod.isByWeight() ? " kg" : "items") + "</td>");
-
-                    }
-                %>
-
+                        <td>${convertor.convertToUSD(product.getValue()*product.getKey().price)}</td>
+                    </c:forEach>
+                </tr>
                 </tbody>
             </table>
         </c:if>

@@ -1,5 +1,6 @@
 package com.example.cash_register.utils;
 
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
@@ -14,5 +15,9 @@ public class CurrencyConvertor {
 
     public static String convertToUAH(double usd) {
         return NumberFormat.getCurrencyInstance(new Locale("ua", "UA")).format(usd * CURRENCY_COURSE_UAH_USD);
+    }
+
+    public static String amountFormat(double d){
+        return new DecimalFormat("#0.00").format(d);
     }
 }

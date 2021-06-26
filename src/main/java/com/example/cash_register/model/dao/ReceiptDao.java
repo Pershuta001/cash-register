@@ -12,7 +12,7 @@ public interface ReceiptDao extends BaseDao<Receipt> {
 
     Optional<Receipt> getUnconfirmed(Long userId);
 
-    void addProductInReceipt(Long receiptId, String nameOrId, Double amount);
+    void addProductInReceipt(Long receiptId, String nameOrId, Double amount) throws Exception;
 
     void confirm(Long receiptId);
 

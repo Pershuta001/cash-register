@@ -1,10 +1,13 @@
 package com.example.cash_register.model.dao.impl;
 
+import com.example.cash_register.controller.exceptions.NoSuchProductException;
+import com.example.cash_register.controller.exceptions.NoSuchReceiptException;
+import com.example.cash_register.controller.exceptions.NotEnoughProductAmountException;
+import com.example.cash_register.model.dao.ProductDao;
 import com.example.cash_register.model.dao.ReceiptDao;
 import com.example.cash_register.model.dao.mapper.ReceiptMapper;
 import com.example.cash_register.model.entity.Product;
 import com.example.cash_register.model.entity.Receipt;
-import com.example.cash_register.model.service.ProductService;
 import com.example.cash_register.utils.Constants;
 
 
@@ -21,11 +24,16 @@ public class JDBCReceiptDao implements ReceiptDao {
             "INSERT INTO receipts(cashier_id, date) VALUES (?,?)";
 
     private final static String ADD_PRODUCT_IN_RECEIPT =
-            "INSERT INTO receipt_product(receipt_id, product_id, amount, weight) VALUES (?,?,?,?)";
+            "INSERT INTO receipt_product(receipt_id, product_id, amount, weight) VALUES (?,?,?,?);";
+
+    private final static String UPDATE_PRODUCT_AMOUNT =
+            "UPDATE products " +
+                    "SET weight = weight - ?, quantity = quantity - ? " +
+                    "WHERE id = ?";
 
     private final static String UPDATE_PRODUCT_AMOUNT_IN_RECEIPT =
             "UPDATE receipt_product " +
-                    "SET amount = ? " +
+                    "SET amount = amount + ? " +
                     "WHERE receipt_id = ? AND product_id = ?";
 
     private final static String UPDATE_DATE_IN_RECEIPT =
@@ -35,7 +43,7 @@ public class JDBCReceiptDao implements ReceiptDao {
 
     private final static String UPDATE_PRODUCT_WEIGHT_IN_RECEIPT =
             "UPDATE receipt_product " +
-                    "SET weight = ? " +
+                    "SET weight = weight + ? " +
                     "WHERE receipt_id = ? AND product_id = ?";
 
     private final static String GET_RECEIPT_WITH_NULL_DATE =
@@ -127,37 +135,68 @@ public class JDBCReceiptDao implements ReceiptDao {
     }
 
     @Override
-    public void addProductInReceipt(Long receiptId, String nameOrId, Double amount) {
-        ProductService productService = new ProductService();
-        Optional<Product> product = productService.findByNameOrId(nameOrId);
-        if (!product.isPresent()) {
-            return;
-        }
-        Receipt receipt = findById(receiptId).get();
-        Optional<Map.Entry<Product, Double>> prodInReceipt =
-                receipt.getProductsInReceipt().entrySet().stream().filter
-                        (p -> p.getKey().getId().equals(product.get().getId())).findFirst();
-
-        if (prodInReceipt.isPresent()) {
-            updateAmount(receiptId, product.get().getId(), product.get().isByWeight(), prodInReceipt.get().getValue() + amount);
-            return;
-        }
+    public void addProductInReceipt(Long receiptId, String nameOrId, Double amount) throws Exception {
         try {
-
-            PreparedStatement statement = connection.prepareStatement(ADD_PRODUCT_IN_RECEIPT);
-            statement.setLong(1, receiptId);
-            statement.setLong(2, product.get().getId());
-            if (product.get().isByWeight()) {
-                statement.setNull(3, Types.NULL);
-                statement.setDouble(4, amount);
-            } else {
-                statement.setNull(4, Types.NULL);
-                statement.setInt(3, amount.intValue());
+            connection.setAutoCommit(false);
+            ProductDao productDao = new JDBCProductDao(connection);
+            Optional<Product> product = productDao.findByNameOrId(nameOrId);
+            if (!product.isPresent()) {
+                throw new NoSuchProductException("name ex");
             }
-            statement.executeUpdate();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+            Product prod = product.get();
+            double available = prod.isByWeight() ? prod.getAvailableWeight() : prod.getAvailableQuantity();
+            if (available < amount) {
+                throw new NotEnoughProductAmountException("amount ex");
+            }
+            Optional<Receipt> receiptOpt = findById(receiptId);
+            if (!receiptOpt.isPresent()) {
+                throw new NoSuchReceiptException("No such receipt");
+            }
+            Receipt receipt = receiptOpt.get();
+
+            if (checkInReceipt(prod, receipt)) {
+                updateAmount(receiptId, prod.getId(), prod.isByWeight(), amount);
+            } else {
+                addNewProductInReceipt(receiptId, prod.getId(), prod.isByWeight(), amount);
+            }
+            updateProductAmount(prod.getId(), amount);
+        } catch (Exception e) {
+            DBUtils.rollback(connection);
+            throw new Exception(e.getMessage());
+        } finally {
+            DBUtils.commit(connection);
         }
+    }
+
+    private void updateProductAmount(Long id, Double amount) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement(UPDATE_PRODUCT_AMOUNT);
+
+        statement.setDouble(1, amount);
+        statement.setInt(2, amount.intValue());
+        statement.setLong(3, id);
+
+        statement.executeUpdate();
+    }
+
+    private void addNewProductInReceipt(Long receiptId, Long productId, boolean isByWeight, Double amount) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement(ADD_PRODUCT_IN_RECEIPT);
+        statement.setLong(1, receiptId);
+        statement.setLong(2, productId);
+        if (isByWeight) {
+            statement.setNull(3, Types.NULL);
+            statement.setDouble(4, amount);
+        } else {
+            statement.setNull(4, Types.NULL);
+            statement.setInt(3, amount.intValue());
+        }
+        statement.executeUpdate();
+    }
+
+    private boolean checkInReceipt(Product prod, Receipt receipt) {
+        return receipt.getProductsInReceipt().entrySet()
+                .stream()
+                .anyMatch(p -> p.getKey().getId().equals(prod.getId()));
+
     }
 
     @Override
@@ -204,8 +243,7 @@ public class JDBCReceiptDao implements ReceiptDao {
             stmt = connection.prepareStatement(GET_RECEIPT_BY_ID);
             stmt.setLong(1, id);
             rs = stmt.executeQuery();
-            ReceiptMapper mapper = new ReceiptMapper();
-            res = mapper.extractFromResultSet(rs);
+            res = new ReceiptMapper().extractFromResultSet(rs);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }

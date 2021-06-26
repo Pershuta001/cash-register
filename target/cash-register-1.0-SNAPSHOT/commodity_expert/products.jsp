@@ -102,11 +102,11 @@
                                    name="amount"
                                     <c:if test="${product.byWeight == true}">
                                         pattern="[0-9]{1,5}[\.]?[0-9]{0,3}"
-                                        placeholder="${product.available_weight}"
+                                        placeholder="${product.availableWeight}"
                                     </c:if>
                                     <c:if test="${product.byWeight == false}">
                                         pattern="[0-9]{1,5}"
-                                        placeholder="${product.available_quantity}"
+                                        placeholder="${product.availableQuantity}"
                                     </c:if>
                                     required
                             />

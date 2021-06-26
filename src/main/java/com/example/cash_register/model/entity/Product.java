@@ -49,7 +49,7 @@ public class Product extends Entity {
         this.name = name;
     }
 
-    public Integer getAvailable_quantity() {
+    public Integer getAvailableQuantity() {
         return available_quantity;
     }
 
@@ -65,7 +65,7 @@ public class Product extends Entity {
         this.byWeight = byWeight;
     }
 
-    public Double getAvailable_weight() {
+    public Double getAvailableWeight() {
         return available_weight;
     }
 

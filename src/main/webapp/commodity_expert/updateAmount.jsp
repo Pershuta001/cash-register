@@ -28,11 +28,11 @@
            Product product = (Product)request.getAttribute("product");
            if(product.isByWeight()){
                out.println("pattern=\"[0-9]{1,5}[\\.]?[0-9]{1,5}\"");
-               out.println("placeholder=\""+product.getAvailable_weight()+"\"");
+               out.println("placeholder=\""+product.getAvailableWeight()+"\"");
            }
            else{
                out.println("pattern=\"[0-9]{1,5}\"");
-               out.println("placeholder=\""+product.getAvailable_quantity()+"\"");
+               out.println("placeholder=\""+product.getAvailableQuantity()+"\"");
            }
            %>
                required

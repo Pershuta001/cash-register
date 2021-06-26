@@ -1,5 +1,6 @@
 package com.example.cash_register.model.service;
 
+import com.example.cash_register.controller.exceptions.NoSuchProductException;
 import com.example.cash_register.controller.view.XReportByCashiersView;
 import com.example.cash_register.model.dao.DaoFactory;
 import com.example.cash_register.model.dao.ReceiptDao;
@@ -30,7 +31,7 @@ public class ReceiptService {
         return receipt;
     }
 
-    public void addProductInReceipt(Long receiptId, String nameOrId, Double amount) {
+    public void addProductInReceipt(Long receiptId, String nameOrId, Double amount) throws Exception {
         try (ReceiptDao receiptDao = repository.createReceiptDao()) {
             receiptDao.addProductInReceipt(receiptId, nameOrId, amount);
         }
@@ -71,5 +72,14 @@ public class ReceiptService {
             res = receiptDao.findAll(page);
         }
         return res;
+    }
+
+    public Optional<Receipt> getReceiptById(Long receiptId) {
+        Optional<Receipt> receipt;
+        try (ReceiptDao receiptDao = repository.createReceiptDao()) {
+            receipt = receiptDao.findById(receiptId);
+        }
+        return receipt;
+
     }
 }

@@ -11,5 +11,5 @@ public interface ProductDao extends BaseDao<Product>{
 
     void updateQuantity(int parseInt, Long id);
 
-    Optional<Product> findByName(String name);
+    Optional<Product> findByNameOrId(String name);
 }

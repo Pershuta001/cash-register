@@ -3,6 +3,7 @@ package com.example.cash_register;
 import com.example.cash_register.controller.commands.*;
 import com.example.cash_register.controller.commands.auth.LoginCommand;
 import com.example.cash_register.controller.commands.auth.LogoutCommand;
+import com.example.cash_register.controller.commands.cashier.AddProductToReceiptCommand;
 import com.example.cash_register.controller.commands.cashier.ConfirmReceiptCommand;
 import com.example.cash_register.controller.commands.cashier.CreateReceiptCommand;
 import com.example.cash_register.controller.commands.expert.CreateProductCommand;
@@ -40,6 +41,7 @@ public class Servlet extends HttpServlet {
 
         commands.put("receipt/create", new CreateReceiptCommand(new ReceiptService()));
         commands.put("receipt/confirm", new ConfirmReceiptCommand(new ReceiptService()));
+        commands.put("receipt/add/product", new AddProductToReceiptCommand(new ReceiptService()));
 
         commands.put("manager/x-report", new XReportProductCommand(new ReceiptService()));
     }

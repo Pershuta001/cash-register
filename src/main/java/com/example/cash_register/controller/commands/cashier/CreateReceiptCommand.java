@@ -20,14 +20,6 @@ public class CreateReceiptCommand implements Command {
 
         Long userId = (Long) request.getSession().getAttribute("id");
 
-        if (request.getParameter("receiptId") != null) {
-            Long receiptId = Long.parseLong(request.getParameter("receiptId"));
-            String nameOrId = request.getParameter("name");
-            String amount = request.getParameter("amount");
-
-            receiptService.addProductInReceipt(receiptId, nameOrId, Double.parseDouble(amount));
-        }
-
         Optional<Receipt> unconfirmed = receiptService.getUnconfirmedCheck(userId);
         if (unconfirmed.isPresent()) {
             request.setAttribute("receipt", unconfirmed.get());
