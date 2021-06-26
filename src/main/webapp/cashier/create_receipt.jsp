@@ -43,6 +43,7 @@
                     <input type="text"
                            id="name"
                            name="name"
+                           pattern="[a-zA-Zа-яА-Я0-9]{1,30}"
                            required
                     >
                 </div>

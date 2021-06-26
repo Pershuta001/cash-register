@@ -1,9 +1,11 @@
 package com.example.cash_register.model.service;
 
+import com.example.cash_register.controller.exceptions.ExistingProductNameException;
 import com.example.cash_register.model.dao.DaoFactory;
 import com.example.cash_register.model.dao.ProductDao;
 import com.example.cash_register.model.entity.Product;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,6 +15,8 @@ public class ProductService {
     public final Product createProduct(Product product) {
         try (ProductDao productDao = repository.createProductDao()) {
             productDao.create(product);
+        }catch (SQLException e){
+            throw new ExistingProductNameException("Product with this name already exists");
         }
         return product;
     }

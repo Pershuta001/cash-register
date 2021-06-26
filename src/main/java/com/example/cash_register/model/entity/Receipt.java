@@ -49,6 +49,13 @@ public class Receipt extends Entity {
         this.date = date;
     }
 
+    public Double getTotalPrice(){
+        return productsInReceipt.entrySet()
+                .stream()
+                .map(p -> p.getKey().getPrice()*p.getValue())
+                .reduce(0.,Double::sum);
+    }
+
     public static class Builder{
 
         private final Receipt receipt;

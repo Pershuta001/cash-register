@@ -1,6 +1,5 @@
 package com.example.cash_register.model.dao.impl;
 
-import com.example.cash_register.model.dao.DaoFactory;
 import com.example.cash_register.model.dao.ProductDao;
 import com.example.cash_register.model.dao.mapper.ProductMapper;
 import com.example.cash_register.model.entity.Product;
@@ -17,8 +16,11 @@ public class JDBCProductDao implements ProductDao {
 
     private final Connection connection;
 
-    private static final String FIND_ALL_BY_PAGE =
-            "SELECT * FROM products limit 10 OFFSET ?";
+    private static final String FIND_ALL_BY_ID =
+            "SELECT * FROM products Order By id limit ? OFFSET ?";
+
+    private static final String FIND_ALL_BY_ID_REVERSE =
+            "SELECT * FROM products Order By id DESC limit ? OFFSET ?";
 
     private static final String COUNT_ALL_PRODUCTS =
             "SELECT COUNT(*) FROM products";
@@ -52,17 +54,17 @@ public class JDBCProductDao implements ProductDao {
                     "FROM products " +
                     "ORDER BY name DESC limit ? OFFSET ?";
 
-    private final static String FIND_ALL_SORT_BY_QUANTITY =
+    private final static String FIND_ALL_SORT_BY_AMOUNT =
             "SELECT * " +
                     "FROM products " +
-                    "WHERE quantity IS NOT NULL " +
-                    "ORDER BY quantity limit ? OFFSET ?";
+                    "ORDER BY coalesce(quantity, weight) " +
+                    "limit ? OFFSET ?";
 
-    private final static String FIND_ALL_SORT_BY_WEIGHT =
+    private final static String FIND_ALL_SORT_BY_AMOUNT_REVERSE =
             "SELECT * " +
                     "FROM products " +
-                    "WHERE weight IS NOT NULL " +
-                    "ORDER BY weight limit ? OFFSET ?";
+                    "ORDER BY coalesce(quantity, weight) DESC " +
+                    "limit ? OFFSET ?";
 
     private final static String UPDATE_PRODUCT_QUANTITY =
             "        UPDATE products " +
@@ -82,14 +84,16 @@ public class JDBCProductDao implements ProductDao {
     }
 
     @Override
-    public void create(Product entity) {
+    public void create(Product entity) throws SQLException {
         PreparedStatement stmt;
         ResultSet resultSet;
         try {
+            connection.setAutoCommit(false);
             stmt = connection.prepareStatement(CREATE_PRODUCT, Statement.RETURN_GENERATED_KEYS);
             stmt.setString(1, entity.getName());
             stmt.setDouble(2, entity.getPrice());
             stmt.setBoolean(4, entity.isByWeight());
+
             if (entity.isByWeight()) {
                 stmt.setNull(3, NULL);
                 stmt.setDouble(5, entity.getAvailable_weight());
@@ -98,18 +102,16 @@ public class JDBCProductDao implements ProductDao {
                 stmt.setInt(3, entity.getAvailable_quantity());
             }
             stmt.executeUpdate();
-
+            connection.commit();
             resultSet = stmt.getGeneratedKeys();
             if (resultSet.next()) {
                 entity.setId(resultSet.getLong(1));
-            } else {
-                throw new SQLException("Creating product failed, no ID obtained.");
             }
-
         } catch (SQLException ex) {
             DBUtils.rollback(connection);
+            throw new SQLException("Creating product failed");
         } finally {
-            DBUtils.commit(connection);
+            close();
         }
     }
 
@@ -153,14 +155,17 @@ public class JDBCProductDao implements ProductDao {
                 case "byAlphabetReverse":
                     stmt = connection.prepareStatement(FIND_ALL_SORT_BY_NAME_DESC);
                     break;
-                case "byQuantity":
-                    stmt = connection.prepareStatement(FIND_ALL_SORT_BY_QUANTITY);
+                case "byAmount":
+                    stmt = connection.prepareStatement(FIND_ALL_SORT_BY_AMOUNT);
                     break;
-                case "byWeight":
-                    stmt = connection.prepareStatement(FIND_ALL_SORT_BY_WEIGHT);
+                case "byAmountReverse":
+                    stmt = connection.prepareStatement(FIND_ALL_SORT_BY_AMOUNT_REVERSE);
+                    break;
+                case "byIdReverse":
+                    stmt = connection.prepareStatement(FIND_ALL_BY_ID_REVERSE);
                     break;
                 default:
-                    stmt = connection.prepareStatement(FIND_ALL_BY_PAGE);
+                    stmt = connection.prepareStatement(FIND_ALL_BY_ID);
             }
             stmt.setInt(1, Constants.PAGE_SIZE);
             stmt.setInt(2, (page - 1) * Constants.PAGE_SIZE);
@@ -179,7 +184,7 @@ public class JDBCProductDao implements ProductDao {
         ProductMapper mapper = new ProductMapper();
         List<Product> res = null;
         try {
-            stmt = connection.prepareStatement(FIND_ALL_BY_PAGE);
+            stmt = connection.prepareStatement(FIND_ALL_BY_ID);
             stmt.setInt(1, (page - 1) * 10);
             rs = stmt.executeQuery();
             res = mapper.extractListFromResultSet(rs);

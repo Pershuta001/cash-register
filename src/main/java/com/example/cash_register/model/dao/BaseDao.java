@@ -1,11 +1,12 @@
 package com.example.cash_register.model.dao;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
 public interface BaseDao<E> extends AutoCloseable {
 
-    void create(E entity);
+    void create(E entity) throws SQLException;
 
     Optional<E> findById(Long id);
 

@@ -27,12 +27,13 @@ public class UpdateProductCommand implements Command {
         addPageParams(request);
 
         if (request.getParameter("amount") == null) {
-            return "/commodity_expert/products.jsp";
+            return String.format("redirect:/app/product/all?page=%s&sort=%s", request.getParameter("page"), request.getParameter("sort"));
         }
         productService.updateAmount(product.get().isByWeight(), request.getParameter("amount"), id);
         product = productService.findById(id);
         request.setAttribute("product", product.get());
-        return "/commodity_expert/products.jsp";
+        return String.format("redirect:/app/product/all?page=%s&sort=%s", request.getParameter("page"), request.getParameter("sort"));
+
     }
 
     private void addPageParams(HttpServletRequest request) {

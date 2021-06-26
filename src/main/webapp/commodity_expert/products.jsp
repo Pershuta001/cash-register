@@ -19,31 +19,6 @@
 <%@include file="/WEB-INF/jspf/header.jspf" %>
 
 <h1><fmt:message key="page.product.products.label"/></h1>
-
-<div>
-    <a href="?page=1&sort=fromCheep">
-        <fmt:message key="fromCheep"/>
-    </a>
-    <a href="?page=1&sort=fromExpensive">
-        <fmt:message key="fromExpensive"/>
-    </a>
-    <a href="?page=1&sort=byAlphabet">
-        <fmt:message key="byAlphabet"/>
-    </a>
-    <a href="?page=1&sort=byAlphabetReverse">
-        <fmt:message key="byAlphabetReverse"/>
-    </a>
-    <a href="?page=1&sort=byQuantity">
-        <fmt:message key="byQuantity"/>
-    </a>
-    <a href="?page=1&sort=byWeight">
-        <fmt:message key="byWeight"/>
-    </a>
-    <a href="?page=1&sort=byId">
-        <fmt:message key="byId"/>
-    </a>
-</div>
-
 <div>
     <div>
 
@@ -55,10 +30,54 @@
         <table cellspacing="2" border="1" cellpadding="5" width="600" id="table">
             <thead>
             <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Price</th>
-                <th>Amount</th>
+                <th>
+                    <c:if test="${requestScope.sort != 'byId'}">
+                        <a href="?page=1&sort=byId">
+                            <fmt:message key="product.id"/>
+                        </a>
+                    </c:if>
+                    <c:if test="${requestScope.sort == 'byId'}">
+                        <a href="?page=1&sort=byIdReverse">
+                            <fmt:message key="product.id"/>
+                        </a>
+                    </c:if>
+                </th>
+                <th>
+                    <c:if test="${requestScope.sort != 'byAlphabet'}">
+                        <a href="?page=1&sort=byAlphabet">
+                            <fmt:message key="product.name.label"/>
+                        </a>
+                    </c:if>
+                    <c:if test="${requestScope.sort == 'byAlphabet'}">
+                        <a href="?page=1&sort=byAlphabetReverse">
+                            <fmt:message key="product.name.label"/>
+                        </a>
+                    </c:if>
+                </th>
+                <th>
+                    <c:if test="${requestScope.sort != 'fromCheep'}">
+                        <a href="?page=1&sort=fromCheep">
+                            <fmt:message key="product.price"/>
+                        </a>
+                    </c:if>
+                    <c:if test="${requestScope.sort == 'fromCheep'}">
+                        <a href="?page=1&sort=fromExpensive">
+                            <fmt:message key="product.price"/>
+                        </a>
+                    </c:if>
+                </th>
+                <th>
+                    <c:if test="${requestScope.sort != 'byAmount'}">
+                        <a href="?page=1&sort=byAmount">
+                            <fmt:message key="prouct.amount"/>
+                        </a>
+                    </c:if>
+                    <c:if test="${requestScope.sort == 'byAmount'}">
+                        <a href="?page=1&sort=byAmountReverse">
+                            <fmt:message key="prouct.amount"/>
+                        </a>
+                    </c:if>
+                </th>
             </tr>
             </thead>
             <tbody>
@@ -67,7 +86,15 @@
                 <tr>
                     <td>${product.id}</td>
                     <td>${product.name}</td>
-                    <td>${product.price}</td>
+                    <td>
+                        $${product.price}
+                        <c:if test="${product.byWeight}">
+                            <fmt:message key="product.perKg"/>
+                        </c:if>
+                        <c:if test="${!product.byWeight}">
+                            <fmt:message key="product.perItem"/>
+                        </c:if>
+                    </td>
                     <td>
                         <form method="post"
                               action="${pageContext.request.contextPath}/app/product/update?id=${product.id}&page=${requestScope.page}&pagesCount=${requestScope.pagesCount}&sort=${requestScope.sort}">
@@ -81,6 +108,7 @@
                                         pattern="[0-9]{1,5}"
                                         placeholder="${product.available_quantity}"
                                     </c:if>
+                                    required
                             />
                             <button type="submit">
                                 <fmt:message key="update"/>

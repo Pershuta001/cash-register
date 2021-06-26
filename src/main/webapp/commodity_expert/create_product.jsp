@@ -17,43 +17,61 @@
 
 <h1><fmt:message key="page.product.create.label"/></h1>
 <form method="post" action="${pageContext.request.contextPath}/app/product/create">
-    <div class="form-group">
+    <div
+    >
         <label for="name">
             <fmt:message key="product.name.label"/>
         </label>
         <input type="text"
                id="name"
                name="name"
+               value="${requestScope.name}"
                required
+        <c:if test="${not empty requestScope.error}">
+               style="color: red"
+        </c:if>
         >
     </div>
-    <div class="form-group">
+    <div>
         <label for="price">
             <fmt:message key="product.price"/>(USD)
         </label>
         <input type="text"
                id="price"
                name="price"
+               value="${requestScope.price}"
                pattern="[0-9]{1,5}[\.]?[0-9]{0,2}"
                required
         >
-        <select id="byWeight" name="byWeight">
-            <option>
-                /kg
+
+        <select name="byWeight" id="byWeight" onchange="changePattern()">
+            <option value="/kg"
+                    <c:if test="${requestScope.byWeight == '/kg'}">
+                        selected
+                    </c:if>
+            >
+                <fmt:message key="product.perKg"/>
             </option>
-            <option>
-                /item
+            <option value="/item"
+                    <c:if test="${requestScope.byWeight == '/item'}">
+                        selected
+                    </c:if>
+            >
+                <fmt:message key="product.perItem"/>
             </option>
         </select>
+
     </div>
-    <div class="form-group">
+    <div>
         <label for="amount">
             <fmt:message key="product.amount.label"/>
         </label>
+
         <input type="text"
                id="amount"
                name="amount"
                pattern="[0-9]{1,5}[\.]?[0-9]{1,5}"
+               value="${requestScope.amount}"
                required
         >
     </div>
@@ -61,31 +79,32 @@
         <fmt:message key="product.create.button"/>
     </button>
 </form>
-<%
-    try {
-        Product product = (Product) request.getAttribute("crProductId");
-        String lang = session.getAttribute("lang") == null ? "en" : (String) session.getAttribute("lang");
-        Locale locale = new Locale(lang);
-        ResourceBundle resourceBundle = ResourceBundle.getBundle("resources", locale);
-        if (product != null) {
 
-%>
-<script type="text/javascript">
-    let myMessage;
-    <%
-        out.println("myMessage = \""+resourceBundle.getString("productAlert")+' '+
-        product.getName()+ ' '+ resourceBundle.getString("productAlert2") + ' ' + product.getId()
-         +"\"");
-    %>
-    alert(myMessage);
-</script>
-<%
-        }
-    } catch (Exception e) {
-        out.println(e.getMessage());
-    }
-%>
+<div class="error" style="color: red">
+    <c:if test="${not empty requestScope.error}">
+        <label>
+                ${requestScope.error}
+        </label>
+    </c:if>
+</div>
+
+<div class="success" style="color: green">
+    <c:if test="${not empty requestScope.success}">
+        <label>
+                ${requestScope.success}
+        </label>
+    </c:if>
+</div>
 <jsp:include page="/WEB-INF/jspf/footer.jspf"/>
 
 </body>
+
+<script>
+    function changePattern() {
+        //  d = document.getElementById("select_id").value;
+        let select = document.getElementById("byWeight");
+        let pattern = select.value === '/kg' ? '[0-9]{1,5}[\.]?[0-9]{1,3}' : '[0-9]{1,5}';
+        document.getElementById("amount").setAttribute('pattern', pattern);
+    }
+</script>
 </html>
