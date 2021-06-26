@@ -40,12 +40,13 @@ public class LoginCommand implements Command {
             return "/WEB-INF/error.jsp";
         }
 
-        Optional<User> user = userService.getUserByLoginAndPassword(login, password);
-        if (user.isPresent()) {
-            CommandUtility.setUserRoleId(request, user.get().getRole(), user.get().getId());
-        } else
+        Optional<User> userOpt = userService.getUserByLoginAndPassword(login, password);
+        if (!userOpt.isPresent()) {
             return "/login.jsp";
+        }
 
+        User user = userOpt.get();
+        CommandUtility.setUserRoleId(request, user.getRole(), user.getId(), login);
         return "redirect:/home.jsp";
     }
 

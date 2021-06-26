@@ -1,10 +1,12 @@
 package com.example.cash_register.controller.commands.manager;
 
 import com.example.cash_register.controller.commands.Command;
+import com.example.cash_register.model.entity.Receipt;
 import com.example.cash_register.model.service.ProductService;
 import com.example.cash_register.model.service.ReceiptService;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 public class GetAllReceiptsCommand implements Command {
     private final ReceiptService receiptService;
@@ -21,8 +23,9 @@ public class GetAllReceiptsCommand implements Command {
 
 
         //request.setAttribute("pagesCount", productService.getPagesCount());
-        request.setAttribute("receipts", receiptService.findAll(page));
+        List<Receipt> receiptList = receiptService.findAll(page);
+        request.setAttribute("receipts",receiptList );
         request.setAttribute("page", page);
-        return "/commodity_expert/products.jsp";
+        return "/cashier_manager/receipts.jsp";
     }
 }

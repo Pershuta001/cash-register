@@ -82,4 +82,22 @@ public class ReceiptService {
         return receipt;
 
     }
+
+    public void updateReduceAmountInReceipt(long receiptId, long prodId, double amount) {
+        try (ReceiptDao receiptDao = repository.createReceiptDao()) {
+             receiptDao.updateReduceAmountInReceipt(receiptId, prodId, amount);
+        }
+    }
+
+    public void updateIncreaseAmountInReceipt(long receiptId, long prodId, double amount) {
+        try (ReceiptDao receiptDao = repository.createReceiptDao()) {
+            receiptDao.updateIncreaseAmountInReceipt(receiptId, prodId, amount);
+        }
+    }
+
+    public void deleteReceipt(Long id) {
+        try (ReceiptDao receiptDao = repository.createReceiptDao()) {
+            receiptDao.delete(id);
+        }
+    }
 }

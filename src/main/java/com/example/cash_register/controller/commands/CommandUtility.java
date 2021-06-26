@@ -9,10 +9,11 @@ import java.util.HashSet;
 public class CommandUtility {
 
     public static void setUserRoleId(HttpServletRequest request,
-                                 Roles role, Long id) {
+                                     Roles role, Long id, String login) {
         HttpSession session = request.getSession();
         session.setAttribute("role", role);
         session.setAttribute("id", id);
+        session.setAttribute("login", login);
     }
 
     public static void removeUserRole(HttpServletRequest request) {

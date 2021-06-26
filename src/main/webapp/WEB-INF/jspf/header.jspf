@@ -16,7 +16,7 @@
                         </a>
                     </c:when>
                     <c:when test="${sessionScope.role == 'CASHIER_MANAGER' }">
-                        <a class="nav-item nav-link active" href="${pageContext.request.contextPath}/app/login">
+                        <a class="nav-item nav-link active" href="${pageContext.request.contextPath}/app/manager/receipts">
                             <fmt:message key="manager.cancel.receipt"/>
                         </a>
                         <a class="nav-item nav-link active" href="${pageContext.request.contextPath}/app/manager/x-report">

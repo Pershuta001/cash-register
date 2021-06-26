@@ -17,4 +17,8 @@ public interface ReceiptDao extends BaseDao<Receipt> {
     void confirm(Long receiptId);
 
     Optional<Map<Product, Double>> getXReportByProducts(Integer page);
+
+    void updateReduceAmountInReceipt(long receiptId, long prodId, Double amount);
+
+    void updateIncreaseAmountInReceipt(long receiptId, long prodId, Double amount);
 }

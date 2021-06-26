@@ -1,10 +1,3 @@
-<%@ page import="com.example.cash_register.model.entity.Product" %>
-<%@ page import="java.util.ResourceBundle" %>
-<%@ page import="java.util.Locale" %>
-<%@ page import="com.example.cash_register.model.service.ProductService" %>
-<%@ page import="java.util.List" %>
-<%@ page import="com.example.cash_register.utils.CurrencyConvertor" %>
-<%@ page import="com.example.cash_register.model.entity.Receipt" %>
 <%@ include file="/WEB-INF/jspf/directive/page.jspf" %>
 <%@ include file="/WEB-INF/jspf/directive/taglibs.jspf" %>
 
@@ -23,58 +16,54 @@
 
 <div>
     <div>
-
-        <%
-            List<Receipt> receipts = (List<Receipt>) request.getAttribute("receipts");
-            if (receipts != null && !receipts.isEmpty()) {
-        %>
-
         <table cellspacing="2" border="1" cellpadding="5" width="600" id="table">
             <thead>
             <tr>
-                <th>Id</th>
-                <th>Cashier Id</th>
-                <th>Date</th>
-
+                <th>
+                    <fmt:message key="receipt.id"/>
+                </th>
+                <th>
+                    <fmt:message key="receipt.cashier.id"/>
+                </th>
+                <th>
+                    <fmt:message key="receipt.date"/>
+                </th>
             </tr>
             </thead>
             <tbody>
 
-            <%
-                for (Receipt receipt : receipts) {
-                    out.println("<tr>");
-                    out.println("<td> " + receipt.getId() + "</td>");
-                    out.println("<td>" + receipt.getCashierId() + "</td>");
-                   // out.println("<td>" + receipt.getDate()+"</td>");
-                    out.println("<td><a href=\"${pageContext.request.contextPath}/app/receipt/update?id=" + receipt.getId()
-                            + "\">Update</a></td>");
-                    out.println("<td><a href=\"${pageContext.request.contextPath}/app/receipt/delete?page=" + request.getAttribute("page") + "&sort=" + request.getAttribute("sort") + "&id=" + receipt.getId()
-                            + "\">Delete</a></td>");
-                    out.println("</tr>");
-                }
-            %>
+            <c:forEach items="${requestScope.receipts}" var="receipt">
+                <tr>
+                    <td>${receipt.id}</td>
+                    <td>${receipt.cashierId}</td>
+                    <td>${receipt.date} </td>
+                    <td>
+                        <a href="${pageContext.request.contextPath}/app/receipt/view?id=${receipt.id}">
+                            <fmt:message key="receipt.view"/>
+                        </a>
+                    </td>
+                    <td>
+                        <a href="${pageContext.request.contextPath}/app/receipt/delete?id=${receipt.id}">
+                            <fmt:message key="receipt.delete"/>
+                        </a>
+                    </td>
+                </tr>
+            </c:forEach>
 
             </tbody>
         </table>
-
-        <%
-            } else {
-                out.println("<p>There are no receipts yet!</p>");
-            }
-        %>
-
     </div>
 </div>
 <div>
-    <%
-        Integer currentPage = (Integer) request.getAttribute("page");
-        Integer pagesCount = (Integer) request.getAttribute("pagesCount");
+    <%--    <%--%>
+    <%--        Integer currentPage = (Integer) request.getAttribute("page");--%>
+    <%--        Integer pagesCount = (Integer) request.getAttribute("pagesCount");--%>
 
-        if (currentPage > 1)
-            out.println("<a href=\"?page=" + (currentPage - 1) + "&sort=" + request.getAttribute("sort") + "\">Prev</a>");
-        if (currentPage < pagesCount)
-            out.println("<a href=\"?page=" + ((Integer) request.getAttribute("page") + 1) + "&sort=" + request.getAttribute("sort") + "\">Next</a>");
-    %>
+    <%--        if (currentPage > 1)--%>
+    <%--            out.println("<a href=\"?page=" + (currentPage - 1) + "&sort=" + request.getAttribute("sort") + "\">Prev</a>");--%>
+    <%--        if (currentPage < pagesCount)--%>
+    <%--            out.println("<a href=\"?page=" + ((Integer) request.getAttribute("page") + 1) + "&sort=" + request.getAttribute("sort") + "\">Next</a>");--%>
+    <%--    %>--%>
 </div>
 <jsp:include page="/WEB-INF/jspf/footer.jspf"/>
 

@@ -12,17 +12,21 @@ public class ReceiptMapper {
     public Optional<Receipt> extractFromResultSet(ResultSet resultSet) throws SQLException {
         Receipt receipt = new Receipt();
         while (resultSet.next()) {
-            if (receipt.getId() == null)
+            if (receipt.getId() == null) {
                 receipt.setId(resultSet.getLong("id"));
+                receipt.setCashierId(resultSet.getLong("cashier_id"));
+                receipt.setDate(resultSet.getDate("date"));
+            }
             Product p = new Product.Builder()
                     .id(resultSet.getLong("product_id"))
                     .name(resultSet.getString("name"))
                     .price(resultSet.getDouble("price"))
                     .byWeight(resultSet.getBoolean("byweight"))
                     .build();
-
-            receipt.getProductsInReceipt().put(p, p.isByWeight() ?
-                    resultSet.getDouble("weight") : resultSet.getDouble("amount"));
+            if (resultSet.getLong("product_id") != 0) {
+                receipt.getProductsInReceipt().put(p, p.isByWeight() ?
+                        resultSet.getDouble("weight") : resultSet.getDouble("amount"));
+            }
         }
         if (receipt.getId() == null) {
             return Optional.empty();
@@ -53,9 +57,17 @@ public class ReceiptMapper {
 
     public List<Receipt> extractListFromResultSet(ResultSet rs) throws SQLException {
         List<Receipt> res = new ArrayList<>();
-        while(rs.next()){
-            res.add(extractFromResultSet(rs).get());
+        while (rs.next()) {
+            res.add(extractEmptyReceipt(rs));
         }
         return res;
+    }
+
+    private Receipt extractEmptyReceipt(ResultSet rs) throws SQLException {
+        return new Receipt.Builder()
+                .id(rs.getLong("id"))
+                .cashierId(rs.getLong("cashier_id"))
+                .date(rs.getDate("date"))
+                .build();
     }
 }

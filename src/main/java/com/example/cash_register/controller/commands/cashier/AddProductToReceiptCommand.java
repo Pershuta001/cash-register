@@ -1,8 +1,6 @@
 package com.example.cash_register.controller.commands.cashier;
 
 import com.example.cash_register.controller.commands.Command;
-import com.example.cash_register.controller.exceptions.NoSuchProductException;
-import com.example.cash_register.controller.exceptions.NotEnoughProductAmountException;
 import com.example.cash_register.model.entity.Receipt;
 import com.example.cash_register.model.service.ReceiptService;
 
@@ -39,18 +37,16 @@ public class AddProductToReceiptCommand implements Command {
             switch (e.getMessage()) {
                 case "name ex":
                     request.setAttribute("nameError", "No product with such name or id");
+                    break;
                 case "amount ex":
                     request.setAttribute("amountError", "Not enough products in store");
+                    break;
                 default:
                     request.setAttribute("unknown error", e.getMessage());
-                    break;
-
             }
         }
 
         request.setAttribute("receipt", currentReceipt.get());
-        request.setAttribute("price", currentReceipt.get());
-        request.setAttribute("cost", currentReceipt.get());
         return "/cashier/create_receipt.jsp";
     }
 }

@@ -6,10 +6,13 @@ import com.example.cash_register.controller.commands.auth.LogoutCommand;
 import com.example.cash_register.controller.commands.cashier.AddProductToReceiptCommand;
 import com.example.cash_register.controller.commands.cashier.ConfirmReceiptCommand;
 import com.example.cash_register.controller.commands.cashier.CreateReceiptCommand;
+import com.example.cash_register.controller.commands.cashier.UpdateProductAmountInReceiptCommand;
 import com.example.cash_register.controller.commands.expert.CreateProductCommand;
 import com.example.cash_register.controller.commands.expert.DeleteProductCommand;
 import com.example.cash_register.controller.commands.expert.GetAllProductsCommand;
 import com.example.cash_register.controller.commands.expert.UpdateProductCommand;
+import com.example.cash_register.controller.commands.manager.DeleteReceiptCommand;
+import com.example.cash_register.controller.commands.manager.GetAllReceiptsCommand;
 import com.example.cash_register.controller.commands.manager.XReportProductCommand;
 import com.example.cash_register.model.service.ProductService;
 import com.example.cash_register.model.service.ReceiptService;
@@ -42,8 +45,12 @@ public class Servlet extends HttpServlet {
         commands.put("receipt/create", new CreateReceiptCommand(new ReceiptService()));
         commands.put("receipt/confirm", new ConfirmReceiptCommand(new ReceiptService()));
         commands.put("receipt/add/product", new AddProductToReceiptCommand(new ReceiptService()));
+        commands.put("receipt/update/product", new UpdateProductAmountInReceiptCommand(new ReceiptService()));
 
         commands.put("manager/x-report", new XReportProductCommand(new ReceiptService()));
+        commands.put("manager/receipts", new GetAllReceiptsCommand(new ReceiptService()));
+        commands.put("receipt/delete", new DeleteReceiptCommand(new ReceiptService()));
+
     }
 
     public void doGet(HttpServletRequest request,

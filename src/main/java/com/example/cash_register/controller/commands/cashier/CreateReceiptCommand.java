@@ -28,6 +28,7 @@ public class CreateReceiptCommand implements Command {
 
         Optional<Receipt> newReceipt = receiptService.createReceipt(userId);
         newReceipt.ifPresent(receipt -> request.setAttribute("receipt", receipt));
+        
         return "/cashier/create_receipt.jsp";
     }
 }

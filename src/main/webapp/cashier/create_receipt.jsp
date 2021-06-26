@@ -70,12 +70,6 @@
                     </button>
                 </div>
             </form>
-            <form method="post"
-                  action="${pageContext.request.contextPath}/app/receipt/confirm?receiptId=${requestScope.receipt.id}">
-                <button type="submit">
-                    <fmt:message key="receipt.close"/>
-                </button>
-            </form>
             <table cellspacing="2" border="1" cellpadding="5" width="600" id="table">
                 <thead>
                 <tr>
@@ -87,8 +81,9 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <c:forEach items="${requestScope.receipt.productsInReceipt.entrySet()}" var="product">
+
+                <c:forEach items="${requestScope.receipt.productsInReceipt.entrySet()}" var="product">
+                    <tr>
                         <td>${product.getKey().id}</td>
                         <td>${product.getKey().name}</td>
                         <td>
@@ -102,7 +97,7 @@
                         </td>
                         <td>
                             <form method="post"
-                                  action="">
+                                  action="${pageContext.request.contextPath}/app/receipt/update/product?receiptId=${requestScope.receipt.id}&productId=${product.getKey().id}&oldAmount=${product.getValue()}">
                                 <input type="text"
                                        name="amount"
                                         <c:if test="${product.getKey().byWeight == true}">
@@ -122,10 +117,28 @@
                         </td>
 
                         <td>${convertor.convertToUSD(product.getValue()*product.getKey().price)}</td>
-                    </c:forEach>
-                </tr>
+                    </tr>
+                </c:forEach>
                 </tbody>
             </table>
+            <div class="row">
+                <div class="col-2">
+                    <form method="post"
+                          action="${pageContext.request.contextPath}/app/receipt/confirm?receiptId=${requestScope.receipt.id}">
+                        <button type="submit">
+                            <fmt:message key="receipt.close"/>
+                        </button>
+                    </form>
+                </div>
+                <div class="col">
+                    <b>
+                        <fmt:message key="total.price"/>
+                            ${requestScope.receipt.getTotalPrice()}
+                    </b>
+
+                </div>
+            </div>
+
         </c:if>
     </div>
     <div>
