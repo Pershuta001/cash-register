@@ -1,8 +1,10 @@
 package com.example.cash_register.model.dao;
 
+import com.example.cash_register.controller.view.XReportByCashiersView;
 import com.example.cash_register.model.entity.Product;
 import com.example.cash_register.model.entity.Receipt;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -16,9 +18,11 @@ public interface ReceiptDao extends BaseDao<Receipt> {
 
     void confirm(Long receiptId);
 
-    Optional<Map<Product, Double>> getXReportByProducts(Integer page);
+    List<XReportByCashiersView> getXReportByCashiers(Integer page);
 
     void updateReduceAmountInReceipt(long receiptId, long prodId, Double amount);
 
     void updateIncreaseAmountInReceipt(long receiptId, long prodId, Double amount);
+
+    void deleteProductFromReceipt(Long receiptId, Long productId);
 }

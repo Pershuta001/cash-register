@@ -1,5 +1,6 @@
 package com.example.cash_register.model.dao.mapper;
 
+import com.example.cash_register.controller.view.XReportByCashiersView;
 import com.example.cash_register.model.entity.Product;
 import com.example.cash_register.model.entity.Receipt;
 
@@ -53,6 +54,24 @@ public class ReceiptMapper {
             return Optional.empty();
         }
         return Optional.of(report);
+    }
+
+    public List<XReportByCashiersView> extractListReportFromResultSet(ResultSet rs) throws SQLException {
+        List<XReportByCashiersView> cashiersViews = new ArrayList<>();
+        while(rs.next()){
+            cashiersViews.add(extractCashierReportFromResultSet(rs));
+        }
+        return cashiersViews;
+    }
+
+    public XReportByCashiersView extractCashierReportFromResultSet(ResultSet rs) throws SQLException {
+        return new XReportByCashiersView.Builder()
+                .id(rs.getLong("id"))
+                .name(rs.getString("name"))
+                .surname(rs.getString("surname"))
+                .numberOfReceipts(rs.getInt("completed_receipts"))
+                .totalPrice(rs.getDouble("cost"))
+                .build();
     }
 
     public List<Receipt> extractListFromResultSet(ResultSet rs) throws SQLException {

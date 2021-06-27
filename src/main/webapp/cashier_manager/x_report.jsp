@@ -26,52 +26,82 @@
     </div>
     <div>
         <a href="?page=1&sort=cashiers">
-            <fmt:message key="report.product2"/>
+            <fmt:message key="report.cashiers"/>
         </a>
     </div>
 </div>
 <div>
 
     <table cellspacing="2" border="1" cellpadding="5" width="600" id="table">
-        <thead>
-        <tr>
-            <th>Id</th>
-            <th>Name</th>
-            <th>Price(item/kg)</th>
-            <th>Amount</th>
-            <th>Total price</th>
-        </tr>
-        </thead>
-        <tbody>
-        <%
-            Map<Product, Double> items = (Map<Product, Double>) request.getAttribute("items");
-            if (items != null && !items.isEmpty()) {
-                for (Map.Entry<Product, Double> entry : items.entrySet()) {
-                    Product product = entry.getKey();
-                    out.println("<tr>");
-                    out.println("<td> " + product.getId() + "</td>");
-                    out.println("<td>" + product.getName() + "</td>");
-                    out.println("<td>" + CurrencyConvertor.convertToUSD(product.getPrice()) + "</td>");
-                    out.println("<td>" + (product.isByWeight() ? product.getAvailableWeight() + " kg" : product.getAvailableQuantity()) + "</td>");
-                 //   out.println("<td>" + CurrencyConvertor.convertToUSD(product.getPrice() * (product.isByWeight() ? product.getAvailable_weight() : product.getAvailable_quantity())) + "</td>");
+        <c:choose>
+            <c:when test="${requestScope.sort == 'products'}">
+                <thead>
+                <tr>
+                    <th>
+                        <fmt:message key="product.id"/>
+                    </th>
+                    <th>
+                        <fmt:message key="product.name.label"/>
+                    </th>
+                    <th>
+                        <fmt:message key="product.price"/>
+                    </th>
+                    <th>
+                        <fmt:message key="product.sold.amount"/>
+                    </th>
+                    <th>
+                        <fmt:message key="product.sold.price"/>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <c:forEach items="${requestScope.products}" var="product">
+                    <tr>
+                        <td>${product.id}</td>
+                        <td>${product.name}</td>
+                        <td>${product.price} </td>
+                        <td>${product.amount} </td>
+                        <td>${product.price*product.amount} </td>
+                    </tr>
+                </c:forEach>
+                </tbody>
+            </c:when>
 
-                }
-            }
-        %>
-        </tbody>
+            <c:when test="${requestScope.sort == 'cashiers'}">
+                <thead>
+                <tr>
+                    <th>
+                        <fmt:message key="cashier.id"/>
+                    </th>
+                    <th>
+                        <fmt:message key="cashier.name"/>
+                    </th>
+                    <th>
+                        <fmt:message key="cashier.surname"/>
+                    </th>
+                    <th>
+                        <fmt:message key="cashier.receipts"/>
+                    </th>
+                    <th>
+                        <fmt:message key="cashier.receipts.cost"/>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <c:forEach items="${requestScope.items}" var="cashier">
+                    <tr>
+                        <td>${cashier.id}</td>
+                        <td>${cashier.name}</td>
+                        <td>${cashier.surname} </td>
+                        <td>${cashier.numberOfReceipts} </td>
+                        <td>${cashier.totalPrice}</td>
+                    </tr>
+                </c:forEach>
+                </tbody>
+            </c:when>
+        </c:choose>
     </table>
 
-    <div>
-        <%
-            Integer currentPage = (Integer) request.getAttribute("page");
-            Integer pagesCount = (Integer) request.getAttribute("pagesCount");
-
-            if (currentPage > 1)
-                out.println("<a href=\"?page=" + (currentPage - 1) + "&sort=" + request.getAttribute("sort") + "\">Prev</a>");
-            if (currentPage < pagesCount)
-                out.println("<a href=\"?page=" + ((Integer) request.getAttribute("page") + 1) + "&sort=" + request.getAttribute("sort") + "\">Next</a>");
-        %>
-    </div>
     <jsp:include page="/WEB-INF/jspf/footer.jspf"/>
 
 </body>

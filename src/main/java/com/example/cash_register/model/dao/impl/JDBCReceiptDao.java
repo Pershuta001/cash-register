@@ -3,6 +3,7 @@ package com.example.cash_register.model.dao.impl;
 import com.example.cash_register.controller.exceptions.NoSuchProductException;
 import com.example.cash_register.controller.exceptions.NoSuchReceiptException;
 import com.example.cash_register.controller.exceptions.NotEnoughProductAmountException;
+import com.example.cash_register.controller.view.XReportByCashiersView;
 import com.example.cash_register.model.dao.ProductDao;
 import com.example.cash_register.model.dao.ReceiptDao;
 import com.example.cash_register.model.dao.mapper.ReceiptMapper;
@@ -21,6 +22,16 @@ public class JDBCReceiptDao implements ReceiptDao {
     private final Connection connection;
 
     private static final String DELETE_RECEIPT_BY_ID = "DELETE FROM receipts WHERE id = ?";
+
+    private static final String GET_PRODUCT_AMOUNT_IN_RECEIPT =
+            "SELECT coalesce(weight, amount) as amount " +
+                    "from receipt_product " +
+                    "WHERE  product_id =  ? and receipt_id = ?";
+
+    private static final String DELETE_PRODUCT_IN_RECEIPT =
+            "DELETE " +
+                    "from receipt_product " +
+                    "WHERE  product_id =  ? and receipt_id = ?";
 
     private final static String CREATE_RECEIPT =
             "INSERT INTO receipts(cashier_id, date) VALUES (?,?)";
@@ -67,6 +78,15 @@ public class JDBCReceiptDao implements ReceiptDao {
                     "         INNER JOIN products p on p.id = rp.product_id " +
                     "group by product_id, p.name, p.price, p.byweight" +
                     " limit ? OFFSET ?";
+
+    private final static  String GET_X_REPORT_BY_CASHIERS =
+            "SELECT u.id, u.name, u.surname, count(distinct (r.id)) as completed_receipts, sum(coalesce(rp.weight, rp.amount)*p.price) as cost \n" +
+                    "from users u\n" +
+                    "         INNER JOIN receipts r on u.id = r.cashier_id\n" +
+                    "         INNER JOIN receipt_product rp on r.id = rp.receipt_id\n" +
+                    "         INNER JOIN products p on p.id = rp.product_id\n" +
+                    "group by u.id, u.name, u.surname\n" +
+                    "limit ? offset ?;";
 
     private final static String GET_ALL_RECEIPTS_WITH_PRODUCTS =
             "SELECT product_id, p.name, p.price,p.byWeight, r.id, rp.amount, rp.weight " +
@@ -262,18 +282,17 @@ public class JDBCReceiptDao implements ReceiptDao {
         return null;
     }
 
-    public Optional<Map<Product, Double>> getXReportByProducts(Integer page) {
+    public List<XReportByCashiersView> getXReportByCashiers(Integer page) {
         PreparedStatement stmt;
         ResultSet rs;
-        Optional<Map<Product, Double>> res = Optional.empty();
+        List<XReportByCashiersView> res = null;
         try {
-            stmt = connection.prepareStatement(GET_X_REPORT_BY_PRODUCTS);
+            stmt = connection.prepareStatement(GET_X_REPORT_BY_CASHIERS);
             stmt.setInt(1, Constants.PAGE_SIZE);
             stmt.setInt(2, Constants.PAGE_SIZE * (page - 1));
             rs = stmt.executeQuery();
             ReceiptMapper mapper = new ReceiptMapper();
-            res = mapper.extractXProductReport(rs);
-
+            res = mapper.extractListReportFromResultSet(rs);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -326,6 +345,40 @@ public class JDBCReceiptDao implements ReceiptDao {
         } finally {
             DBUtils.commit(connection);
         }
+    }
+
+    @Override
+    public void deleteProductFromReceipt(Long receiptId, Long productId) {
+
+        PreparedStatement statement;
+        ResultSet rs;
+
+        try {
+            connection.setAutoCommit(false);
+
+            statement = connection.prepareStatement(GET_PRODUCT_AMOUNT_IN_RECEIPT);
+            statement.setLong(1, productId);
+            statement.setLong(2, receiptId);
+
+            rs = statement.executeQuery();
+            double amount = 0;
+
+            if (rs.next()) {
+                amount = rs.getDouble("amount");
+            }
+            updateProductAmount(productId, -amount);
+            statement = connection.prepareStatement(DELETE_PRODUCT_IN_RECEIPT);
+            statement.setLong(1, productId);
+            statement.setLong(2, receiptId);
+
+            statement.executeUpdate();
+
+        } catch (SQLException throwables) {
+            DBUtils.rollback(connection);
+        } finally {
+            DBUtils.commit(connection);
+        }
+
     }
 
     @Override

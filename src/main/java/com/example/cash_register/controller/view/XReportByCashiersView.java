@@ -1,25 +1,47 @@
 package com.example.cash_register.controller.view;
 
-import com.example.cash_register.model.entity.User;
-
 public class XReportByCashiersView {
 
-    private User user;
+    private Long id;
+    private String name;
+    private String surname;
     private Integer numberOfReceipts;
-    private Double totalSum;
+    private Double totalPrice;
 
-    public XReportByCashiersView(User user, Integer numberOfReceipts, Double totalSum) {
-        this.user = user;
+    public XReportByCashiersView(Long id, String name, String surname, Integer numberOfReceipts, Double totalPrice) {
+        this.id = id;
+        this.name = name;
+        this.surname = surname;
         this.numberOfReceipts = numberOfReceipts;
-        this.totalSum = totalSum;
+        this.totalPrice = totalPrice;
     }
 
-    public User getUser() {
-        return user;
+    public XReportByCashiersView() {
+
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
     }
 
     public Integer getNumberOfReceipts() {
@@ -30,11 +52,48 @@ public class XReportByCashiersView {
         this.numberOfReceipts = numberOfReceipts;
     }
 
-    public Double getTotalSum() {
-        return totalSum;
+    public Double getTotalPrice() {
+        return totalPrice;
     }
 
-    public void setTotalSum(Double totalSum) {
-        this.totalSum = totalSum;
+    public void setTotalPrice(Double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public static class Builder{
+
+        private XReportByCashiersView report;
+
+        public Builder(){
+            report = new XReportByCashiersView();
+        }
+
+        public Builder id(Long id){
+            report.id = id;
+            return this;
+        }
+
+        public Builder name(String name){
+            report.name = name;
+            return this;
+        }
+
+        public Builder surname(String surname){
+            report.surname = surname;
+            return this;
+        }
+        public Builder numberOfReceipts(Integer numberOfReceipts){
+            report.numberOfReceipts = numberOfReceipts;
+            return this;
+        }
+
+        public Builder totalPrice(Double price){
+            report.totalPrice = price;
+            return this;
+        }
+
+        public XReportByCashiersView build(){
+            return report;
+        }
     }
 }

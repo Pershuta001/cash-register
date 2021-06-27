@@ -1,14 +1,11 @@
 package com.example.cash_register.model.service;
 
-import com.example.cash_register.controller.exceptions.NoSuchProductException;
 import com.example.cash_register.controller.view.XReportByCashiersView;
 import com.example.cash_register.model.dao.DaoFactory;
 import com.example.cash_register.model.dao.ReceiptDao;
-import com.example.cash_register.model.entity.Product;
 import com.example.cash_register.model.entity.Receipt;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public class ReceiptService {
@@ -37,12 +34,11 @@ public class ReceiptService {
         }
     }
 
-    public Optional<Map<Product, Double>> getXReport(Integer page, String sort) {
-        Optional<Map<Product, Double>> res;
+    public List<XReportByCashiersView> getXReportByCashiers(Integer page, String sort) {
         try (ReceiptDao receiptDao = repository.createReceiptDao()) {
-            res = receiptDao.getXReportByProducts(page);
+            return receiptDao.getXReportByCashiers(page);
         }
-        return res;
+
     }
 
 //    public Optional<List<XReportByCashiersView>> getXReportByCashier(Integer page, String sort) {
@@ -85,7 +81,7 @@ public class ReceiptService {
 
     public void updateReduceAmountInReceipt(long receiptId, long prodId, double amount) {
         try (ReceiptDao receiptDao = repository.createReceiptDao()) {
-             receiptDao.updateReduceAmountInReceipt(receiptId, prodId, amount);
+            receiptDao.updateReduceAmountInReceipt(receiptId, prodId, amount);
         }
     }
 
@@ -98,6 +94,19 @@ public class ReceiptService {
     public void deleteReceipt(Long id) {
         try (ReceiptDao receiptDao = repository.createReceiptDao()) {
             receiptDao.delete(id);
+        }
+    }
+
+    public Optional<Receipt> findById(Long id) {
+        try (ReceiptDao receiptDao = repository.createReceiptDao()) {
+            return receiptDao.findById(id);
+        }
+
+    }
+
+    public void deleteProductFromReceipt(Long receiptId, Long productId) {
+        try (ReceiptDao receiptDao = repository.createReceiptDao()) {
+            receiptDao.deleteProductFromReceipt(receiptId, productId);
         }
     }
 }

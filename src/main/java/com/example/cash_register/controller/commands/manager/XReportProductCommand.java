@@ -21,7 +21,7 @@ public class XReportProductCommand implements Command {
 
         request.setAttribute("pagesCount", 1);
         request.setAttribute("sort", sort);
-        request.setAttribute("items", receiptService.getXReport(page, sort).get());
+        request.setAttribute("items", receiptService.getXReportByCashiers(page, sort));
         request.setAttribute("page", page);
         return "/cashier_manager/x_report.jsp";
     }
