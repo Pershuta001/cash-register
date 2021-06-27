@@ -12,6 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.swing.text.html.Option;
 import java.util.Optional;
 
+import static com.example.cash_register.utils.Validator.isLoginValid;
+import static com.example.cash_register.utils.Validator.nullOrEmpty;
+
 public class LoginCommand implements Command {
 
     private final UserService userService;
@@ -25,24 +28,28 @@ public class LoginCommand implements Command {
 
         Roles role = (Roles) request.getSession().getAttribute("role");
         if (role != null && !role.equals(Roles.GUEST)) {
-            return "/home.jsp";
+            return "redirect:/home.jsp";
         }
 
         String login = request.getParameter("login");
         String password = request.getParameter("password");
 
-        if (Validator.nullOrEmpty(login) || Validator.nullOrEmpty(password)
-                || !userService.existsByLoginAndPassword(login, password)) {
+        if (nullOrEmpty(login) || nullOrEmpty(password)) {
             return "/login.jsp";
         }
 
-        if (CommandUtility.checkUserIsLogged(request, login)) {
-            return "/WEB-INF/error.jsp";
+        if (!isLoginValid(login)) {
+            request.setAttribute("exception", "Wrong login format");
+            return "/WEB-INF/exception.jsp";
         }
 
         Optional<User> userOpt = userService.getUserByLoginAndPassword(login, password);
         if (!userOpt.isPresent()) {
             return "/login.jsp";
+        }
+        if (CommandUtility.checkUserIsLogged(request, login)) {
+            request.setAttribute("exception", "You have been already logged in. Please log out first");
+            return "/WEB-INF/exception.jsp";
         }
 
         User user = userOpt.get();

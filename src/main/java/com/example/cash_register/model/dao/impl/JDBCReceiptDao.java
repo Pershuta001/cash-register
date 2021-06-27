@@ -76,7 +76,7 @@ public class JDBCReceiptDao implements ReceiptDao {
                     "WHERE id = ?";
 
     private final static String GET_RECEIPT_WITH_NULL_DATE =
-            "SELECT product_id, p.name, p.price,p.byWeight, r.id, rp.amount, rp.weight " +
+            "SELECT product_id, p.name, cashier_id,date, p.price,p.byWeight, r.id, rp.amount, rp.weight " +
                     "from receipts r " +
                     "         LEFT OUTER JOIN receipt_product rp on r.id = rp.receipt_id " +
                     "         LEFT OUTER JOIN products p on p.id = rp.product_id " +

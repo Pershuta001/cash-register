@@ -2,10 +2,13 @@ package com.example.cash_register.controller.commands.expert;
 
 import com.example.cash_register.controller.commands.Command;
 import com.example.cash_register.model.entity.Product;
+import com.example.cash_register.model.enums.Roles;
 import com.example.cash_register.model.service.ProductService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
+
+import static com.example.cash_register.utils.Validator.*;
 
 public class UpdateProductCommand implements Command {
     private final ProductService productService;
@@ -16,23 +19,35 @@ public class UpdateProductCommand implements Command {
 
     @Override
     public String execute(HttpServletRequest request) {
-        Long id = Long.parseLong(request.getParameter("id"));
+
+        if (!isAllowed(request, Roles.COMMODITY_EXPERT)) {
+            return "redirect:/login.jsp";
+        }
+
+        String idStr = request.getParameter("id");
+        String amountStr = request.getParameter("amount");
+        String pageStr = request.getParameter("page");
+        String sortStr = request.getParameter("sort");
+
+        if (!isIdValid(idStr) || !isWeightValid(amountStr) || !isIdValid(pageStr) || nullOrEmpty(sortStr)) {
+            request.setAttribute("error", "Wrong data entered");
+            return "/WEB-INF/error.jsp";
+        }
+
+        Long id = Long.parseLong(idStr);
         Optional<Product> product = productService.findById(id);
 
         if (!product.isPresent()) {
-            throw new IllegalArgumentException("invalid product ID. perhaps it is already deleted");
+            request.setAttribute("exception", "invalid product ID. perhaps it is already deleted");
+            return "/WEB-INF/exception.jsp";
         }
+        productService.updateAmount(product.get().isByWeight(), amountStr, id);
+        product = productService.findById(id);
 
         request.setAttribute("product", product.get());
         addPageParams(request);
 
-        if (request.getParameter("amount") == null) {
-            return String.format("redirect:/app/product/all?page=%s&sort=%s", request.getParameter("page"), request.getParameter("sort"));
-        }
-        productService.updateAmount(product.get().isByWeight(), request.getParameter("amount"), id);
-        product = productService.findById(id);
-        request.setAttribute("product", product.get());
-        return String.format("redirect:/app/product/all?page=%s&sort=%s", request.getParameter("page"), request.getParameter("sort"));
+        return String.format("redirect:/app/product/all?page=%s&sort=%s", pageStr, sortStr);
 
     }
 
