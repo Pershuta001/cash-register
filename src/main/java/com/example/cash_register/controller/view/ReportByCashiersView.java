@@ -1,6 +1,6 @@
 package com.example.cash_register.controller.view;
 
-public class XReportByCashiersView {
+public class ReportByCashiersView {
 
     private Long id;
     private String name;
@@ -8,7 +8,7 @@ public class XReportByCashiersView {
     private Integer numberOfReceipts;
     private Double totalPrice;
 
-    public XReportByCashiersView(Long id, String name, String surname, Integer numberOfReceipts, Double totalPrice) {
+    public ReportByCashiersView(Long id, String name, String surname, Integer numberOfReceipts, Double totalPrice) {
         this.id = id;
         this.name = name;
         this.surname = surname;
@@ -16,7 +16,7 @@ public class XReportByCashiersView {
         this.totalPrice = totalPrice;
     }
 
-    public XReportByCashiersView() {
+    public ReportByCashiersView() {
 
     }
 
@@ -62,10 +62,10 @@ public class XReportByCashiersView {
 
     public static class Builder{
 
-        private XReportByCashiersView report;
+        private ReportByCashiersView report;
 
         public Builder(){
-            report = new XReportByCashiersView();
+            report = new ReportByCashiersView();
         }
 
         public Builder id(Long id){
@@ -92,7 +92,7 @@ public class XReportByCashiersView {
             return this;
         }
 
-        public XReportByCashiersView build(){
+        public ReportByCashiersView build(){
             return report;
         }
     }

@@ -1,7 +1,3 @@
-<%@ page import="com.example.cash_register.model.entity.Product" %>
-<%@ page import="com.example.cash_register.model.service.ProductService" %>
-<%@ page import="com.example.cash_register.utils.CurrencyConvertor" %>
-<%@ page import="java.util.*" %>
 <%@ include file="/WEB-INF/jspf/directive/page.jspf" %>
 <%@ include file="/WEB-INF/jspf/directive/taglibs.jspf" %>
 
@@ -55,13 +51,13 @@
                 </tr>
                 </thead>
                 <tbody>
-                <c:forEach items="${requestScope.products}" var="product">
+                <c:forEach items="${requestScope.items}" var="product">
                     <tr>
                         <td>${product.id}</td>
                         <td>${product.name}</td>
                         <td>${product.price} </td>
-                        <td>${product.amount} </td>
-                        <td>${product.price*product.amount} </td>
+                        <td>${product.soldAmount} </td>
+                        <td>${product.totalPrice} </td>
                     </tr>
                 </c:forEach>
                 </tbody>

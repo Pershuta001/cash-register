@@ -45,7 +45,9 @@ public class Servlet extends HttpServlet {
         commands.put("receipt/add/product", new AddProductToReceiptCommand(new ReceiptService()));
         commands.put("receipt/update/product", new UpdateProductAmountInReceiptCommand(new ReceiptService()));
 
-        commands.put("manager/x-report", new XReportProductCommand(new ReceiptService()));
+        commands.put("manager/x-report", new XReportCommand(new ReceiptService()));
+        commands.put("manager/z-report", new GetZReportCommand(new ReceiptService()));
+        commands.put("manager/init/z-report", new MakeZReportCommand(new ReceiptService()));
         commands.put("manager/receipts", new GetAllReceiptsCommand(new ReceiptService()));
         commands.put("receipt/delete", new DeleteReceiptCommand(new ReceiptService()));
         commands.put("receipt/view", new ViewReceiptDetailsCommand(new ReceiptService()));

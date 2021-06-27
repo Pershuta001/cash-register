@@ -3,7 +3,8 @@ package com.example.cash_register.model.dao.impl;
 import com.example.cash_register.controller.exceptions.NoSuchProductException;
 import com.example.cash_register.controller.exceptions.NoSuchReceiptException;
 import com.example.cash_register.controller.exceptions.NotEnoughProductAmountException;
-import com.example.cash_register.controller.view.XReportByCashiersView;
+import com.example.cash_register.controller.view.ReportByCashiersView;
+import com.example.cash_register.controller.view.ReportByProductsView;
 import com.example.cash_register.model.dao.ProductDao;
 import com.example.cash_register.model.dao.ReceiptDao;
 import com.example.cash_register.model.dao.mapper.ReceiptMapper;
@@ -18,6 +19,26 @@ import java.util.Map;
 import java.util.Optional;
 
 public class JDBCReceiptDao implements ReceiptDao {
+
+    private static final String GET_ALL_RECEIPTS_ID =
+            "SELECT id, cashier_id, date FROM receipts WHERE date IS NOT NULL";
+
+    private static final String GET_ALL_PRODUCTS_BY_RECEIPT_ID =
+            "SELECT id,byweight, name, price, amount, rp.weight, coalesce(amount, rp.weight) as total\n" +
+                    "from products INNER JOIN receipt_product rp on products.id = rp.product_id\n" +
+                    "WHERE receipt_id = ?;";
+
+    private static final String GET_Z_REPORT_BY_PRODUCTS = "" +
+            "SELECT zrrp.product_id as id,\n" +
+            "       zrrp.name,\n" +
+            "       zrrp.price,\n" +
+            "       sum(coalesce(zrrp.quantity, zrrp.weight))              as sold_amount,\n" +
+            "       zrrp.price * sum(coalesce(zrrp.quantity, zrrp.weight)) as total_price\n" +
+            "from z_report_receipts z\n" +
+            "         INNER JOIN z_report_receipt_product zrrp on z.id = zrrp.receipt_id\n" +
+            "WHERE date = ?" +
+            "group by zrrp.name, zrrp.price,zrrp.product_id \n"+
+            "LIMIT ? OFFSET ?;";
 
     private final Connection connection;
 
@@ -73,13 +94,12 @@ public class JDBCReceiptDao implements ReceiptDao {
                     "WHERE r.id = ?";
 
     private final static String GET_X_REPORT_BY_PRODUCTS =
-            "SELECT product_id, p.name, p.price, p.byweight, sum(rp.amount) as quantity, sum(rp.weight) as weight " +
-                    "from receipt_product rp " +
-                    "         INNER JOIN products p on p.id = rp.product_id " +
-                    "group by product_id, p.name, p.price, p.byweight" +
-                    " limit ? OFFSET ?";
+            "SELECT p.id, p.name, p.price, sum(coalesce(rp.amount, rp.weight)) as sold_amount, p.price * sum(coalesce(rp.amount, rp.weight)) as total_price\n" +
+                    "from products p LEFT JOIN receipt_product rp on p.id = rp.product_id\n" +
+                    "group by p.id, p.name, p.price\n" +
+                    "LIMIT ? OFFSET ?;";
 
-    private final static  String GET_X_REPORT_BY_CASHIERS =
+    private final static String GET_X_REPORT_BY_CASHIERS =
             "SELECT u.id, u.name, u.surname, count(distinct (r.id)) as completed_receipts, sum(coalesce(rp.weight, rp.amount)*p.price) as cost \n" +
                     "from users u\n" +
                     "         INNER JOIN receipts r on u.id = r.cashier_id\n" +
@@ -88,17 +108,6 @@ public class JDBCReceiptDao implements ReceiptDao {
                     "group by u.id, u.name, u.surname\n" +
                     "limit ? offset ?;";
 
-    private final static String GET_ALL_RECEIPTS_WITH_PRODUCTS =
-            "SELECT product_id, p.name, p.price,p.byWeight, r.id, rp.amount, rp.weight " +
-                    "from receipts r " +
-                    "         LEFT OUTER JOIN receipt_product rp on r.id = rp.receipt_id " +
-                    "         LEFT OUTER JOIN products p on p.id = rp.product_id " +
-                    "WHERE r.id IN ( " +
-                    "    SELECT id " +
-                    "    FROM receipts " +
-                    "    WHERE date IS NOT NULL " +
-                    ") " +
-                    "limit ? OFFSET ?";
 
     private final static String GET_ALL_RECEIPTS =
             "SELECT *\n" +
@@ -106,6 +115,24 @@ public class JDBCReceiptDao implements ReceiptDao {
                     "WHERE date IS NOT NULL\n" +
                     "limit ? OFFSET ?";
 
+    private static final String INSERT_IN_Z_RECEIPT_TABLE =
+            "INSERT INTO z_report_receipts(id, cashier_id, date) VALUES (?,?,?);";
+
+    private static final String INSERT_IN_Z_RECEIPT_PRODUCT_TABLE =
+            "INSERT INTO z_report_receipt_product(receipt_id,product_id, name, price,quantity, weight) VALUES (?,?,?,?,?,?);";
+
+    private static final String GET_Z_REPORT_BY_CASHIERS =
+            "SELECT u.id,\n" +
+                    "       u.name,\n" +
+                    "       u.surname,\n" +
+                    "       count(distinct (zr.id))                              as completed_receipts,\n" +
+                    "       sum(coalesce(zrrp.weight, zrrp.quantity) * zrrp.price) as cost\n" +
+                    "from z_report_receipts zr\n" +
+                    "         INNER JOIN users u on zr.cashier_id = u.id\n" +
+                    "         INNER JOIN z_report_receipt_product zrrp on zr.id = zrrp.receipt_id\n" +
+                    "WHERE date = ?\n" +
+                    "group by u.id, u.name, u.surname " +
+                    "limit ? OFFSET ?";
 
     public JDBCReceiptDao(Connection connection) {
         this.connection = connection;
@@ -282,10 +309,10 @@ public class JDBCReceiptDao implements ReceiptDao {
         return null;
     }
 
-    public List<XReportByCashiersView> getXReportByCashiers(Integer page) {
+    public List<ReportByCashiersView> getXReportByCashiers(Integer page) {
         PreparedStatement stmt;
         ResultSet rs;
-        List<XReportByCashiersView> res = null;
+        List<ReportByCashiersView> res = null;
         try {
             stmt = connection.prepareStatement(GET_X_REPORT_BY_CASHIERS);
             stmt.setInt(1, Constants.PAGE_SIZE);
@@ -382,6 +409,95 @@ public class JDBCReceiptDao implements ReceiptDao {
     }
 
     @Override
+    public List<ReportByProductsView> getXReportByProducts(Integer page) {
+        PreparedStatement stmt;
+        ResultSet rs;
+        List<ReportByProductsView> res = null;
+        ReceiptMapper mapper = new ReceiptMapper();
+        try {
+            stmt = connection.prepareStatement(GET_X_REPORT_BY_PRODUCTS);
+            stmt.setInt(1, Constants.PAGE_SIZE);
+            stmt.setInt(2, Constants.PAGE_SIZE * (page - 1));
+            rs = stmt.executeQuery();
+            res = mapper.extractListReportProductsFromResultSet(rs);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return res;
+    }
+
+    public List<ReportByCashiersView> getZReportByCashiers(Date date, int page) {
+        PreparedStatement statement;
+        ResultSet rs;
+        List<ReportByCashiersView> res = null;
+        ReceiptMapper mapper = new ReceiptMapper();
+        try {
+            statement = connection.prepareStatement(GET_Z_REPORT_BY_CASHIERS);
+            statement.setDate(1, date);
+            statement.setInt(2, Constants.PAGE_SIZE);
+            statement.setInt(3, Constants.PAGE_SIZE * (page - 1));
+
+            rs = statement.executeQuery();
+            res = mapper.extractListReportFromResultSet(rs);
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return res;
+    }
+    public List<ReportByProductsView> getZReportByProducts(Date date, int page) {
+        PreparedStatement statement;
+        ResultSet rs;
+        List<ReportByProductsView> res = null;
+        ReceiptMapper mapper = new ReceiptMapper();
+        try {
+            statement = connection.prepareStatement(GET_Z_REPORT_BY_PRODUCTS);
+            statement.setDate(1, date);
+            statement.setInt(2, Constants.PAGE_SIZE);
+            statement.setInt(3, Constants.PAGE_SIZE * (page - 1));
+
+            rs = statement.executeQuery();
+            res = mapper.extractListReportProductsFromResultSet(rs);
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return res;
+    }
+
+
+    @Override
+    public void makeZReport() {
+        PreparedStatement stmt;
+        ResultSet rs;
+        ReceiptMapper mapper = new ReceiptMapper();
+        List<Receipt> res;
+
+        try {
+            connection.setAutoCommit(false);
+            stmt = connection.prepareStatement(GET_ALL_RECEIPTS_ID);
+            rs = stmt.executeQuery();
+            res = mapper.extractListFromResultSet(rs);
+
+            for (Receipt r : res) {
+                stmt = connection.prepareStatement(GET_ALL_PRODUCTS_BY_RECEIPT_ID);
+                stmt.setLong(1, r.getId());
+                rs = stmt.executeQuery();
+                r.setProductsInReceipt(mapper.extractMapOfProducts(rs));
+                copyToZTables(r);
+                deleteFromActiveTables(r);
+            }
+
+        } catch (SQLException throwables) {
+            DBUtils.rollback(connection);
+        } finally {
+            DBUtils.commit(connection);
+        }
+
+
+    }
+
+    @Override
     public List<Receipt> findAll(Integer page) {
         PreparedStatement stmt;
         ResultSet rs;
@@ -397,6 +513,57 @@ public class JDBCReceiptDao implements ReceiptDao {
             throwables.printStackTrace();
         }
         return res;
+    }
+
+    private void deleteFromActiveTables(Receipt r) {
+
+        PreparedStatement statement;
+        try {
+            connection.setAutoCommit(false);
+
+            statement = connection.prepareStatement(DELETE_RECEIPT_BY_ID);
+            statement.setLong(1, r.getId());
+            statement.executeUpdate();
+
+        } catch (SQLException throwables) {
+            DBUtils.rollback(connection);
+        } finally {
+            DBUtils.commit(connection);
+        }
+    }
+
+    private void copyToZTables(Receipt r) {
+        PreparedStatement statement;
+        try {
+            connection.setAutoCommit(false);
+            statement = connection.prepareStatement(INSERT_IN_Z_RECEIPT_TABLE);
+            statement.setLong(1, r.getId());
+            statement.setLong(2, r.getCashierId());
+            statement.setDate(3, new Date(r.getDate().getTime()));
+
+            statement.executeUpdate();
+
+            for (Map.Entry<Product, Double> entry : r.getProductsInReceipt().entrySet()) {
+                statement = connection.prepareStatement(INSERT_IN_Z_RECEIPT_PRODUCT_TABLE);
+                statement.setLong(1, r.getId());
+                statement.setLong(2, entry.getKey().getId());
+                statement.setString(3, entry.getKey().getName());
+                statement.setDouble(4, entry.getKey().getPrice());
+                if (entry.getKey().isByWeight()) {
+                    statement.setInt(5, Types.NULL);
+                    statement.setDouble(6, entry.getValue());
+                } else {
+                    statement.setInt(5, entry.getValue().intValue());
+                    statement.setDouble(6, Types.NULL);
+                }
+                statement.executeUpdate();
+            }
+
+        } catch (SQLException throwables) {
+            DBUtils.rollback(connection);
+        } finally {
+            DBUtils.commit(connection);
+        }
     }
 
     @Override

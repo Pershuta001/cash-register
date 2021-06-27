@@ -5,10 +5,10 @@ import com.example.cash_register.model.service.ReceiptService;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class XReportProductCommand implements Command {
+public class XReportCommand implements Command {
     private final ReceiptService receiptService;
 
-    public XReportProductCommand(ReceiptService receiptService) {
+    public XReportCommand(ReceiptService receiptService) {
         this.receiptService = receiptService;
     }
 
@@ -21,7 +21,11 @@ public class XReportProductCommand implements Command {
 
         request.setAttribute("pagesCount", 1);
         request.setAttribute("sort", sort);
-        request.setAttribute("items", receiptService.getXReportByCashiers(page, sort));
+        if (sort.equals("cashiers"))
+            request.setAttribute("items", receiptService.getXReportByCashiers(page));
+        else{
+            request.setAttribute("items", receiptService.getXReportByProducts(page));
+        }
         request.setAttribute("page", page);
         return "/cashier_manager/x_report.jsp";
     }

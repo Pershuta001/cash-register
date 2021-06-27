@@ -22,7 +22,7 @@
                         <a class="nav-item nav-link active" href="${pageContext.request.contextPath}/app/manager/x-report">
                             <fmt:message key="manager.xreport.receipt"/>
                         </a>
-                        <a class="nav-item nav-link active" href="${pageContext.request.contextPath}/app/login">
+                        <a class="nav-item nav-link active" href="${pageContext.request.contextPath}/app/manager/z-report">
                             <fmt:message key="manager.zreport.receipt"/>
                         </a>
                     </c:when>

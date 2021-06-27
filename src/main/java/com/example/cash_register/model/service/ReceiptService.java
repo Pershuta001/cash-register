@@ -1,10 +1,12 @@
 package com.example.cash_register.model.service;
 
-import com.example.cash_register.controller.view.XReportByCashiersView;
+import com.example.cash_register.controller.view.ReportByCashiersView;
+import com.example.cash_register.controller.view.ReportByProductsView;
 import com.example.cash_register.model.dao.DaoFactory;
 import com.example.cash_register.model.dao.ReceiptDao;
 import com.example.cash_register.model.entity.Receipt;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,27 +36,12 @@ public class ReceiptService {
         }
     }
 
-    public List<XReportByCashiersView> getXReportByCashiers(Integer page, String sort) {
+    public List<ReportByCashiersView> getXReportByCashiers(Integer page) {
         try (ReceiptDao receiptDao = repository.createReceiptDao()) {
             return receiptDao.getXReportByCashiers(page);
         }
 
     }
-
-//    public Optional<List<XReportByCashiersView>> getXReportByCashier(Integer page, String sort) {
-//        Optional<Map<Product, Double>> res;
-//        try (ReceiptDao receiptDao = repository.createReceiptDao()) {
-//            res = receiptDao.getXReportByProducts(page);
-//        }
-//        return res;
-//    }
-//    public Optional<List<XReportByCashiersView>> getXReportByProduct(Integer page, String sort) {
-//        Optional<Map<Product, Double>> res;
-//        try (ReceiptDao receiptDao = repository.createReceiptDao()) {
-//            res = receiptDao.getXReportByProducts(page);
-//        }
-//        return res;
-//    }
 
     public void confirmReceipt(Long receiptId) {
         try (ReceiptDao receiptDao = repository.createReceiptDao()) {
@@ -107,6 +94,30 @@ public class ReceiptService {
     public void deleteProductFromReceipt(Long receiptId, Long productId) {
         try (ReceiptDao receiptDao = repository.createReceiptDao()) {
             receiptDao.deleteProductFromReceipt(receiptId, productId);
+        }
+    }
+
+    public List<ReportByProductsView> getXReportByProducts(Integer page) {
+        try (ReceiptDao receiptDao = repository.createReceiptDao()) {
+            return receiptDao.getXReportByProducts(page);
+        }
+    }
+
+    public void makeZReport(){
+        try (ReceiptDao receiptDao = repository.createReceiptDao()) {
+            receiptDao.makeZReport();
+        }
+    }
+
+    public List<ReportByProductsView> getZReportByProducts(Date date, Integer page) {
+        try (ReceiptDao receiptDao = repository.createReceiptDao()) {
+            return receiptDao.getZReportByProducts(date, page);
+        }
+    }
+
+    public List<ReportByCashiersView> getZReportByCashiers(Date date, Integer page) {
+        try (ReceiptDao receiptDao = repository.createReceiptDao()) {
+            return receiptDao.getZReportByCashiers(date, page);
         }
     }
 }

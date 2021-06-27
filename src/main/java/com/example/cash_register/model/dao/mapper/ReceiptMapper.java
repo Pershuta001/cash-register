@@ -1,6 +1,7 @@
 package com.example.cash_register.model.dao.mapper;
 
-import com.example.cash_register.controller.view.XReportByCashiersView;
+import com.example.cash_register.controller.view.ReportByCashiersView;
+import com.example.cash_register.controller.view.ReportByProductsView;
 import com.example.cash_register.model.entity.Product;
 import com.example.cash_register.model.entity.Receipt;
 
@@ -35,37 +36,16 @@ public class ReceiptMapper {
         return Optional.of(receipt);
     }
 
-    public Optional<Map<Product, Double>> extractXProductReport(ResultSet rs) throws SQLException {
-        HashMap<Product, Double> report = new HashMap<>();
+    public List<ReportByCashiersView> extractListReportFromResultSet(ResultSet rs) throws SQLException {
+        List<ReportByCashiersView> cashiersViews = new ArrayList<>();
         while (rs.next()) {
-            Product p = new Product.Builder()
-                    .id(rs.getLong("product_id"))
-                    .name(rs.getString("name"))
-                    .price(rs.getDouble("price"))
-                    .byWeight(rs.getBoolean("byweight"))
-                    .build();
-
-            if (p.isByWeight())
-                report.put(p, rs.getDouble("weight"));
-            else
-                report.put(p, rs.getDouble("quantity"));
-        }
-        if (report.size() == 0) {
-            return Optional.empty();
-        }
-        return Optional.of(report);
-    }
-
-    public List<XReportByCashiersView> extractListReportFromResultSet(ResultSet rs) throws SQLException {
-        List<XReportByCashiersView> cashiersViews = new ArrayList<>();
-        while(rs.next()){
             cashiersViews.add(extractCashierReportFromResultSet(rs));
         }
         return cashiersViews;
     }
 
-    public XReportByCashiersView extractCashierReportFromResultSet(ResultSet rs) throws SQLException {
-        return new XReportByCashiersView.Builder()
+    public ReportByCashiersView extractCashierReportFromResultSet(ResultSet rs) throws SQLException {
+        return new ReportByCashiersView.Builder()
                 .id(rs.getLong("id"))
                 .name(rs.getString("name"))
                 .surname(rs.getString("surname"))
@@ -88,5 +68,39 @@ public class ReceiptMapper {
                 .cashierId(rs.getLong("cashier_id"))
                 .date(rs.getDate("date"))
                 .build();
+    }
+
+    public List<ReportByProductsView> extractListReportProductsFromResultSet(ResultSet rs) throws SQLException {
+
+        List<ReportByProductsView> res = new ArrayList<>();
+        while (rs.next()) {
+            res.add(extractProductReport(rs));
+        }
+        return res;
+    }
+
+    public ReportByProductsView extractProductReport(ResultSet rs) throws SQLException {
+        return new ReportByProductsView.Builder()
+                .id(rs.getLong("id"))
+                .name(rs.getString("name"))
+                .price(rs.getDouble("price"))
+                .soldAmount(rs.getDouble("sold_amount"))
+                .totalPrice(rs.getDouble("total_price"))
+                .build();
+    }
+
+    public Map<Product, Double> extractMapOfProducts(ResultSet rs) throws SQLException {
+        Map<Product, Double> result = new HashMap<>();
+        while (rs.next()) {
+            result.put(new Product.Builder()
+                    .id(rs.getLong("id"))
+                    .byWeight(rs.getBoolean("byweight"))
+                    .name(rs.getString("name"))
+                    .price(rs.getDouble("price"))
+                    .weight(rs.getDouble("weight"))
+                    .quantity(rs.getInt("amount"))
+                    .build(), rs.getDouble("total"));
+        }
+        return result;
     }
 }
