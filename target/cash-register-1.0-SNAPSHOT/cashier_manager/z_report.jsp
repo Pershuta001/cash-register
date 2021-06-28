@@ -12,7 +12,7 @@
 
 <%@include file="/WEB-INF/jspf/header.jspf" %>
 
-<h1><fmt:message key="page.product.products.label"/></h1>
+<h1><fmt:message key="product.products"/></h1>
 
 
 <form action="?page=1" method="get">
@@ -29,7 +29,7 @@
     </div>
     <div>
         <button type="submit">
-            <fmt:message key="z.report.get"/>
+            <fmt:message key="report.get.z"/>
         </button>
     </div>
 </form>
@@ -38,7 +38,7 @@
 </script>
 <form action="${pageContext.request.contextPath}/app/manager/init/z-report" method="post">
     <button type="submit">
-        <fmt:message key="make.z.report"/>
+        <fmt:message key="report.make.z"/>
     </button>
 </form>
 <div>
@@ -52,16 +52,16 @@
                         <fmt:message key="product.id"/>
                     </th>
                     <th>
-                        <fmt:message key="product.name.label"/>
+                        <fmt:message key="product.name"/>
                     </th>
                     <th>
                         <fmt:message key="product.price"/>
                     </th>
                     <th>
-                        <fmt:message key="product.sold.amount"/>
+                        <fmt:message key="product.amount"/>
                     </th>
                     <th>
-                        <fmt:message key="product.sold.price"/>
+                        <fmt:message key="total.price"/>
                     </th>
                 </tr>
                 </thead>
@@ -94,7 +94,7 @@
                         <fmt:message key="cashier.receipts"/>
                     </th>
                     <th>
-                        <fmt:message key="cashier.receipts.cost"/>
+                        <fmt:message key="total.price"/>
                     </th>
                 </tr>
                 </thead>

@@ -15,12 +15,12 @@
 
 <%@include file="/WEB-INF/jspf/header.jspf" %>
 
-<h1><fmt:message key="page.product.create.label"/></h1>
+<h1><fmt:message key="product.create"/></h1>
 <form method="post" action="${pageContext.request.contextPath}/app/product/create">
     <div
     >
         <label for="name">
-            <fmt:message key="product.name.label"/>
+            <fmt:message key="product.name"/>
         </label>
         <input type="text"
                id="name"
@@ -64,7 +64,7 @@
     </div>
     <div>
         <label for="amount">
-            <fmt:message key="product.amount.label"/>
+            <fmt:message key="product.amount"/>
         </label>
 
         <input type="text"
@@ -76,7 +76,7 @@
         >
     </div>
     <button type="submit" class="btn btn-primary">
-        <fmt:message key="product.create.button"/>
+        <fmt:message key="product.create"/>
     </button>
 </form>
 

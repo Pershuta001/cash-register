@@ -12,7 +12,7 @@
 
 <%@include file="/WEB-INF/jspf/header.jspf" %>
 
-<h1><fmt:message key="page.product.receipts.label"/></h1>
+<h1><fmt:message key="product.receipts"/></h1>
 
 <div>
     <div>

@@ -1,7 +1,11 @@
 <%@ include file="/WEB-INF/jspf/directive/page.jspf" %>
 <%@ include file="/WEB-INF/jspf/directive/taglibs.jspf" %>
 <%@ page isErrorPage="true" import="java.io.*" %>
-<html>
+
+<fmt:setLocale value="${sessionScope.lang}"/>
+<fmt:setBundle basename="resources"/>
+
+<html lang="${sessionScope.lang}">
 <head>
     <title>Exceptional Even Occurred!</title>
 </head>
@@ -12,7 +16,7 @@
 </h2>
 
 <a href="${pageContext.request.contextPath}/">
-    <fmt:message key="go.home"/>
+    <fmt:message key="back"/>
 </a>
 </body>
 </html>

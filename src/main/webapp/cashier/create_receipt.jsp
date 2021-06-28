@@ -13,7 +13,7 @@
              class="com.example.cash_register.utils.CurrencyConvertor"/>
 <%@include file="/WEB-INF/jspf/header.jspf" %>
 
-<h1><fmt:message key="page.product.products.label"/></h1>
+<h1><fmt:message key="product.products"/></h1>
 
 <div>
     <div>
@@ -31,7 +31,7 @@
                   action="${pageContext.request.contextPath}/app/receipt/add/product?receiptId=${requestScope.receipt.id}">
                 <div>
                     <label for="name">
-                        <fmt:message key="product.nameorid.label"/>
+                        <fmt:message key="product.name.id"/>
                     </label>
                     <input type="text"
                            id="name"
@@ -48,13 +48,13 @@
 
                 <div>
                     <label for="amount">
-                        <fmt:message key="product.amount.label"/>
+                        <fmt:message key="product.amount"/>
                     </label>
 
                     <input type="text"
                            id="amount"
                            name="amount"
-                           pattern="[0-9]{1,5}[\.]?[0-9]{0,2}"
+                           pattern="[0-9]{1,5}[\.]?[0-9]{0,3}"
                            required
                     >
 
@@ -74,10 +74,10 @@
                 <thead>
                 <tr>
                     <th><fmt:message key="product.id"/></th>
-                    <th><fmt:message key="product.name.label"/></th>
+                    <th><fmt:message key="product.name"/></th>
                     <th><fmt:message key="product.price"/></th>
-                    <th><fmt:message key="product.amount.label"/></th>
-                    <th><fmt:message key="product.cost"/></th>
+                    <th><fmt:message key="product.amount"/></th>
+                    <th><fmt:message key="product.price"/></th>
                 </tr>
                 </thead>
                 <tbody>

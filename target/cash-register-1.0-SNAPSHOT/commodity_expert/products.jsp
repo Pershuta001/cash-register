@@ -18,7 +18,7 @@
 
 <%@include file="/WEB-INF/jspf/header.jspf" %>
 
-<h1><fmt:message key="page.product.products.label"/></h1>
+<h1><fmt:message key="product.products"/></h1>
 <div>
     <div>
 
@@ -27,7 +27,7 @@
             if (products != null && !products.isEmpty()) {
         %>
 
-        <table cellspacing="2" border="1" cellpadding="5" width="600" id="table">
+        <table cellspacing="2" border="1" cellpadding="5" width="800" id="table">
             <thead>
             <tr>
                 <th>
@@ -45,12 +45,12 @@
                 <th>
                     <c:if test="${requestScope.sort != 'byAlphabet'}">
                         <a href="?page=1&sort=byAlphabet">
-                            <fmt:message key="product.name.label"/>
+                            <fmt:message key="product.name"/>
                         </a>
                     </c:if>
                     <c:if test="${requestScope.sort == 'byAlphabet'}">
                         <a href="?page=1&sort=byAlphabetReverse">
-                            <fmt:message key="product.name.label"/>
+                            <fmt:message key="product.name"/>
                         </a>
                     </c:if>
                 </th>
@@ -69,12 +69,12 @@
                 <th>
                     <c:if test="${requestScope.sort != 'byAmount'}">
                         <a href="?page=1&sort=byAmount">
-                            <fmt:message key="prouct.amount"/>
+                            <fmt:message key="product.amount"/>
                         </a>
                     </c:if>
                     <c:if test="${requestScope.sort == 'byAmount'}">
                         <a href="?page=1&sort=byAmountReverse">
-                            <fmt:message key="prouct.amount"/>
+                            <fmt:message key="product.amount"/>
                         </a>
                     </c:if>
                 </th>
@@ -108,7 +108,7 @@
                                         pattern="[0-9]{1,5}"
                                         placeholder="${product.availableQuantity}"
                                     </c:if>
-                                    required
+                                   required
                             />
                             <button type="submit">
                                 <fmt:message key="update"/>
@@ -117,7 +117,7 @@
                     </td>
                     <td>
                         <a href="${pageContext.request.contextPath}/app/product/delete?page=${requestScope.page}&sort=${requestScope.sort}&id=${product.id}">
-                            Delete
+                            <fmt:message key="receipt.delete"/>
                         </a>
                     </td>
                 </tr>

@@ -15,11 +15,11 @@
 
 <%@include file="/WEB-INF/jspf/header.jspf" %>
 
-<h1><fmt:message key="page.product.update.label"/></h1>
+<h1><fmt:message key="product.update"/></h1>
 <form method="post" action="${pageContext.request.contextPath}/app/product/update?id=${requestScope.product.id}">
     <div class="form-group">
         <label for="amount">
-            <fmt:message key="product.amount.label"/>
+            <fmt:message key="product.amount"/>
         </label>
         <input type="text"
                id="amount"
@@ -39,12 +39,12 @@
         >
     </div>
     <button type="submit" class="btn btn-primary">
-        <fmt:message key="page.product.update.label"/>
+        <fmt:message key="product.update"/>
     </button>
 </form>
 <form method="get" action="${pageContext.request.contextPath}/app/product/all?page=1">
     <button type="submit">
-        <fmt:message key="back.label"/>
+        <fmt:message key="back"/>
     </button>
 </form>
 <jsp:include page="/WEB-INF/jspf/footer.jspf"/>

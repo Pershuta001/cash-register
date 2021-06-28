@@ -20,6 +20,8 @@
           <element id="library" level="project" name="Maven: org.postgresql:postgresql:42.2.20" />
           <element id="library" level="project" name="Maven: org.checkerframework:checker-qual:3.5.0" />
           <element id="library" level="project" name="Maven: org.mindrot:jbcrypt:0.4" />
+          <element id="library" level="project" name="Maven: org.apache.logging.log4j:log4j-core:2.14.0" />
+          <element id="library" level="project" name="Maven: org.apache.logging.log4j:log4j-api:2.14.0" />
         </element>
       </element>
       <element id="directory" name="META-INF">

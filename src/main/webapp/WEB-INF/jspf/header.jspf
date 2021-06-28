@@ -1,37 +1,45 @@
-<%@ include file="directive/page.jspf"%>
-<%@ include file="directive/taglibs.jspf"%>
+<%@ include file="directive/page.jspf" %>
+<%@ include file="directive/taglibs.jspf" %>
 
 <%
     response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
 %>
 <nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-between">
-    <a class="navbar-brand" href="#">Cash register</a>
+    <a class="navbar-brand" href="${pageContext.request.contextPath}/">
+        <fmt:message key="title"/>
+    </a>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
             <c:if test="${not empty sessionScope.role}">
                 <c:choose>
                     <c:when test="${sessionScope.role == 'CASHIER' }">
-                        <a class="nav-item nav-link active" href="${pageContext.request.contextPath}/app/receipt/create">
-                            <fmt:message key="header_jspf.cashier.create"/>
+                        <a class="nav-item nav-link active"
+                           href="${pageContext.request.contextPath}/app/receipt/create">
+                            <fmt:message key="receipt.create"/>
                         </a>
                     </c:when>
                     <c:when test="${sessionScope.role == 'CASHIER_MANAGER' }">
-                        <a class="nav-item nav-link active" href="${pageContext.request.contextPath}/app/manager/receipts">
-                            <fmt:message key="manager.cancel.receipt"/>
+                        <a class="nav-item nav-link active"
+                           href="${pageContext.request.contextPath}/app/manager/receipts">
+                            <fmt:message key="product.receipts"/>
                         </a>
-                        <a class="nav-item nav-link active" href="${pageContext.request.contextPath}/app/manager/x-report">
-                            <fmt:message key="manager.xreport.receipt"/>
+                        <a class="nav-item nav-link active"
+                           href="${pageContext.request.contextPath}/app/manager/x-report">
+                            <fmt:message key="receipt.xreport"/>
                         </a>
-                        <a class="nav-item nav-link active" href="${pageContext.request.contextPath}/app/manager/z-report">
-                            <fmt:message key="manager.zreport.receipt"/>
+                        <a class="nav-item nav-link active"
+                           href="${pageContext.request.contextPath}/app/manager/z-report">
+                            <fmt:message key="receipt.zreport"/>
                         </a>
                     </c:when>
                     <c:when test="${sessionScope.role == 'COMMODITY_EXPERT' }">
-                        <a class="nav-item nav-link active" href="${pageContext.request.contextPath}/app/product/create">
-                            <fmt:message key="expert.product.create"/>
+                        <a class="nav-item nav-link active"
+                           href="${pageContext.request.contextPath}/app/product/create">
+                            <fmt:message key="product.create"/>
                         </a>
-                        <a class="nav-item nav-link active" href="${pageContext.request.contextPath}/app/product/all?page=1">
-                            <fmt:message key="expert.product.update"/>
+                        <a class="nav-item nav-link active"
+                           href="${pageContext.request.contextPath}/app/product/all?page=1">
+                            <fmt:message key="product.update"/>
                         </a>
                     </c:when>
                 </c:choose>
@@ -47,14 +55,11 @@
                 <a class="nav-item nav-link active" href="${pageContext.request.contextPath}/app/login">
                     <fmt:message key="login"/>
                 </a>
-                <a class="nav-item nav-link active" href="${pageContext.request.contextPath}/app/registration">
-                    <fmt:message key="register"/>
-                </a>
             </c:if>
             <a class="nav-item nav-link active" href="?sessionLocale=en">
                 <fmt:message key="lang.en"/>
             </a>
-            <a class="nav-item nav-link active" href="?sessionLocale=ru">
+            <a class="nav-item nav-link active" href="?sessionLocale=ua">
                 <fmt:message key="lang.ua"/>
             </a>
 

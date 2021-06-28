@@ -70,7 +70,7 @@ public class ProductService {
     }
 
     public Optional<Product> findByNameOrId(String nameOrId) {
-        Optional<Product> product = Optional.empty();
+        Optional<Product> product;
         try{
             product = findById(Long.parseLong(nameOrId));
         } catch (NumberFormatException e) {

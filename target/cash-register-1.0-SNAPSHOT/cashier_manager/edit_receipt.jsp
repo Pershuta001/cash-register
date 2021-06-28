@@ -17,7 +17,7 @@
 <h1><fmt:message key="receipt.id"/>: ${requestScope.receipt.id}</h1>
 <h2><fmt:message key="cashier.id"/>: ${requestScope.receipt.cashierId}</h2>
 <h2><fmt:message key="receipt.date"/>: ${requestScope.receipt.date}</h2>
-<h2><fmt:message key="receipt.total.price"/>: ${requestScope.receipt.getTotalPrice()}</h2>
+<h2><fmt:message key="total.price"/>: ${requestScope.receipt.getTotalPrice()}</h2>
 <div>
     <div>
         <table cellspacing="2" border="1" cellpadding="5" width="600" id="table">
@@ -38,12 +38,12 @@
                 <th>
                     <c:if test="${requestScope.sort != 'byAlphabet'}">
                         <a href="?page=1&sort=byAlphabet">
-                            <fmt:message key="product.name.label"/>
+                            <fmt:message key="product.name"/>
                         </a>
                     </c:if>
                     <c:if test="${requestScope.sort == 'byAlphabet'}">
                         <a href="?page=1&sort=byAlphabetReverse">
-                            <fmt:message key="product.name.label"/>
+                            <fmt:message key="product.name"/>
                         </a>
                     </c:if>
                 </th>
@@ -62,12 +62,12 @@
                 <th>
                     <c:if test="${requestScope.sort != 'byAmount'}">
                         <a href="?page=1&sort=byAmount">
-                            <fmt:message key="prouct.amount"/>
+                            <fmt:message key="product.amount"/>
                         </a>
                     </c:if>
                     <c:if test="${requestScope.sort == 'byAmount'}">
                         <a href="?page=1&sort=byAmountReverse">
-                            <fmt:message key="prouct.amount"/>
+                            <fmt:message key="product.amount"/>
                         </a>
                     </c:if>
                 </th>
@@ -75,12 +75,12 @@
                 <th>
                     <c:if test="${requestScope.sort != 'byAmount'}">
                         <a href="?page=1&sort=byAmount">
-                            <fmt:message key="prouct.cost"/>
+                            <fmt:message key="product.amount"/>
                         </a>
                     </c:if>
                     <c:if test="${requestScope.sort == 'byAmount'}">
                         <a href="?page=1&sort=byAmountReverse">
-                            <fmt:message key="prouct.cost"/>
+                            <fmt:message key="product.amount"/>
                         </a>
                     </c:if>
                 </th>
