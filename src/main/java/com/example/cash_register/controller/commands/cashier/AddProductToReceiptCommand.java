@@ -31,7 +31,7 @@ public class AddProductToReceiptCommand implements Command {
         String amount = request.getParameter("amount");
 
 
-        if(!isIdValid(receiptId)||!isNameValid(productNameOrId)||!isWeightValid(amount)){
+        if (!isIdValid(receiptId) || !isNameValid(productNameOrId) || !isWeightValid(amount)) {
             request.setAttribute("exception", "Wrong data entered. Please correct it.");
             return "/cashier/create_receipt.jsp";
         }
@@ -58,6 +58,6 @@ public class AddProductToReceiptCommand implements Command {
         }
 
         request.setAttribute("receipt", currentReceipt.get());
-        return "/cashier/create_receipt.jsp";
+        return "redirect:/app/receipt/create";
     }
 }

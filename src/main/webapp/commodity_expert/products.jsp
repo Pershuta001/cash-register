@@ -1,9 +1,5 @@
 <%@ page import="com.example.cash_register.model.entity.Product" %>
-<%@ page import="java.util.ResourceBundle" %>
-<%@ page import="java.util.Locale" %>
-<%@ page import="com.example.cash_register.model.service.ProductService" %>
 <%@ page import="java.util.List" %>
-<%@ page import="com.example.cash_register.utils.CurrencyConvertor" %>
 <%@ include file="/WEB-INF/jspf/directive/page.jspf" %>
 <%@ include file="/WEB-INF/jspf/directive/taglibs.jspf" %>
 
@@ -17,6 +13,8 @@
 <body>
 
 <%@include file="/WEB-INF/jspf/header.jspf" %>
+<jsp:useBean id="convertor"
+             class="com.example.cash_register.utils.Convertor"/>
 
 <h1><fmt:message key="product.products"/></h1>
 <div>
@@ -87,7 +85,7 @@
                     <td>${product.id}</td>
                     <td>${product.name}</td>
                     <td>
-                        $${product.price}
+                        <my:price value="${product.price}" locale="${sessionScope.lang}"/>
                         <c:if test="${product.byWeight}">
                             <fmt:message key="product.perKg"/>
                         </c:if>
@@ -102,11 +100,11 @@
                                    name="amount"
                                     <c:if test="${product.byWeight == true}">
                                         pattern="[0-9]{1,5}[\.]?[0-9]{0,3}"
-                                        placeholder="${product.availableWeight}"
+                                        placeholder="${convertor.amountFormat(product.availableWeight, true)}"
                                     </c:if>
                                     <c:if test="${product.byWeight == false}">
                                         pattern="[0-9]{1,5}"
-                                        placeholder="${product.availableQuantity}"
+                                        placeholder="${convertor.amountFormat(product.availableQuantity, false)}"
                                     </c:if>
                                    required
                             />

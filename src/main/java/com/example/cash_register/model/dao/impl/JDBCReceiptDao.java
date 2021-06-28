@@ -37,7 +37,7 @@ public class JDBCReceiptDao implements ReceiptDao {
             "from z_report_receipts z\n" +
             "         INNER JOIN z_report_receipt_product zrrp on z.id = zrrp.receipt_id\n" +
             "WHERE date = ?" +
-            "group by zrrp.name, zrrp.price,zrrp.product_id \n"+
+            "group by zrrp.name, zrrp.price,zrrp.product_id \n" +
             "LIMIT ? OFFSET ?;";
 
     private final Connection connection;
@@ -95,7 +95,7 @@ public class JDBCReceiptDao implements ReceiptDao {
 
     private final static String GET_X_REPORT_BY_PRODUCTS =
             "SELECT p.id, p.name, p.price, sum(coalesce(rp.amount, rp.weight)) as sold_amount, p.price * sum(coalesce(rp.amount, rp.weight)) as total_price\n" +
-                    "from products p LEFT JOIN receipt_product rp on p.id = rp.product_id\n" +
+                    "from products p INNER JOIN receipt_product rp on p.id = rp.product_id\n" +
                     "group by p.id, p.name, p.price\n" +
                     "LIMIT ? OFFSET ?;";
 
@@ -445,6 +445,7 @@ public class JDBCReceiptDao implements ReceiptDao {
         }
         return res;
     }
+
     public List<ReportByProductsView> getZReportByProducts(Date date, int page) {
         PreparedStatement statement;
         ResultSet rs;
@@ -550,11 +551,11 @@ public class JDBCReceiptDao implements ReceiptDao {
                 statement.setString(3, entry.getKey().getName());
                 statement.setDouble(4, entry.getKey().getPrice());
                 if (entry.getKey().isByWeight()) {
-                    statement.setInt(5, Types.NULL);
+                    statement.setNull(5, Types.NULL);
                     statement.setDouble(6, entry.getValue());
                 } else {
                     statement.setInt(5, entry.getValue().intValue());
-                    statement.setDouble(6, Types.NULL);
+                    statement.setNull(6, Types.NULL);
                 }
                 statement.executeUpdate();
             }

@@ -3,6 +3,8 @@
 
 <fmt:setLocale value="${sessionScope.lang}"/>
 <fmt:setBundle basename="resources"/>
+<jsp:useBean id="convertor"
+             class="com.example.cash_register.utils.Convertor"/>
 
 <html lang="${sessionScope.lang}">
 
@@ -55,9 +57,12 @@
                     <tr>
                         <td>${product.id}</td>
                         <td>${product.name}</td>
-                        <td>${product.price} </td>
-                        <td>${product.soldAmount} </td>
-                        <td>${product.totalPrice} </td>
+                        <td>
+                            <my:price value="${product.price}" locale="${sessionScope.lang}"/>
+                        </td>
+                        <td> ${convertor.amountFormat(product.soldAmount, true)} </td>
+                        <td><my:price value=" ${product.totalPrice}"
+                                      locale="${sessionScope.lang}"/></td>
                     </tr>
                 </c:forEach>
                 </tbody>
@@ -90,7 +95,8 @@
                         <td>${cashier.name}</td>
                         <td>${cashier.surname} </td>
                         <td>${cashier.numberOfReceipts} </td>
-                        <td>${cashier.totalPrice}</td>
+                        <td><my:price value=" ${cashier.totalPrice}"
+                                      locale="${sessionScope.lang}"/></td>
                     </tr>
                 </c:forEach>
                 </tbody>

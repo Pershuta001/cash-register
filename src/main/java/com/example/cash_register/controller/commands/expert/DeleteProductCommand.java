@@ -43,6 +43,6 @@ public class DeleteProductCommand implements Command {
         request.setAttribute("page", page);
         request.setAttribute("products", productService.findAll(page, sort));
 
-        return "/commodity_expert/products.jsp";
+        return "redirect:/app/product/all";
     }
 }

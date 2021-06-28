@@ -1,6 +1,3 @@
-<%@ page import="com.example.cash_register.model.entity.Product" %>
-<%@ page import="java.util.ResourceBundle" %>
-<%@ page import="java.util.Locale" %>
 <%@ include file="/WEB-INF/jspf/directive/page.jspf" %>
 <%@ include file="/WEB-INF/jspf/directive/taglibs.jspf" %>
 

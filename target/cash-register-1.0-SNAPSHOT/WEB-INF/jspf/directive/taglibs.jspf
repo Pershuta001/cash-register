@@ -12,3 +12,8 @@ JSTL functions tag library.
 JSTL i18n tag library.
 ===========================================================================--%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+<%--===========================================================================
+Custom tag for price
+===========================================================================--%>
+<%@ taglib uri="/WEB-INF/tagLibs/priceTag.tld" prefix="my" %>

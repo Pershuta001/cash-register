@@ -1,0 +1,24 @@
+<taglib>
+    <tlib-version>1.0</tlib-version>
+    <jsp-version>2.0</jsp-version>
+    <short-name>Price Tag</short-name>
+
+    <tag>
+        <name>price</name>
+        <tag-class>com.example.cash_register.tags.PriceTag</tag-class>
+
+        <attribute>
+            <name>value</name>
+            <type>double</type>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>locale</name>
+            <type>java.lang.String</type>
+            <rtexprvalue>true</rtexprvalue>
+            <required>false</required>
+        </attribute>
+    </tag>
+
+</taglib>

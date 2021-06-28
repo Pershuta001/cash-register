@@ -10,7 +10,7 @@
 
 <body>
 <jsp:useBean id="convertor"
-             class="com.example.cash_register.utils.CurrencyConvertor"/>
+             class="com.example.cash_register.utils.Convertor"/>
 <%@include file="/WEB-INF/jspf/header.jspf" %>
 
 <h1><fmt:message key="product.products"/></h1>
@@ -70,7 +70,7 @@
                     </button>
                 </div>
             </form>
-            <table cellspacing="2" border="1" cellpadding="5" width="600" id="table">
+            <table cellspacing="2" border="1" cellpadding="5" width="900" id="table">
                 <thead>
                 <tr>
                     <th><fmt:message key="product.id"/></th>
@@ -87,7 +87,7 @@
                         <td>${product.getKey().id}</td>
                         <td>${product.getKey().name}</td>
                         <td>
-                                ${convertor.convertToUSD(product.getKey().price)}
+                            <my:price value="${product.getKey().price}" locale="${sessionScope.lang}"/>
                             <c:if test="${product.getKey().byWeight}">
                                 <fmt:message key="product.perKg"/>
                             </c:if>
@@ -107,7 +107,7 @@
                                         <c:if test="${product.getKey().byWeight == false}">
                                             pattern="[0-9]{1,5}"
                                         </c:if>
-                                       placeholder="${convertor.amountFormat(product.getValue())}"
+                                       placeholder="${convertor.amountFormat(product.getValue(),product.getKey().byWeight)}"
                                        required
                                 />
                                 <button type="submit">
@@ -116,7 +116,10 @@
                             </form>
                         </td>
 
-                        <td>${convertor.convertToUSD(product.getValue()*product.getKey().price)}</td>
+                        <td>
+                            <my:price value="${product.getValue()*product.getKey().price}"
+                                      locale="${sessionScope.lang}"/>
+                        </td>
                     </tr>
                 </c:forEach>
                 </tbody>
@@ -133,9 +136,9 @@
                 <div class="col">
                     <b>
                         <fmt:message key="total.price"/>
-                            ${requestScope.receipt.getTotalPrice()}
+                        <my:price value="${requestScope.receipt.getTotalPrice()}"
+                                  locale="${sessionScope.lang}"/>
                     </b>
-
                 </div>
             </div>
 
