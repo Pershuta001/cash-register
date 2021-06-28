@@ -7,7 +7,17 @@
     <servlet>
         <servlet-name>ServletName</servlet-name>
         <servlet-class>com.example.cash_register.Servlet</servlet-class>
+
+        <init-param>
+            <param-name>log4j-init-file</param-name>
+            <param-value>WEB-INF/log4j.properties</param-value>
+        </init-param>
+
+        <load-on-startup>1</load-on-startup>
+
     </servlet>
+
+
     <servlet-mapping>
         <servlet-name>ServletName</servlet-name>
         <url-pattern>/app/*</url-pattern>

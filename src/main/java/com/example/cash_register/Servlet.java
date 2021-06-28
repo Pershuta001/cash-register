@@ -15,6 +15,9 @@ import com.example.cash_register.controller.commands.manager.*;
 import com.example.cash_register.model.service.ProductService;
 import com.example.cash_register.model.service.ReceiptService;
 import com.example.cash_register.model.service.UserService;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -23,16 +26,20 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+
 public class Servlet extends HttpServlet {
     private Map<String, Command> commands = new HashMap<>();
 
+    private static final Logger log = Logger.getLogger(Servlet.class);
+
     public void init(ServletConfig servletConfig) {
+        BasicConfigurator.configure();
+
         servletConfig.getServletContext()
                 .setAttribute("loggedUsers", new HashSet<String>());
 
         commands.put("logout", new LogoutCommand());
         commands.put("login", new LoginCommand(new UserService()));
-        commands.put("exception", new ExceptionCommand());
 
         commands.put("product/create", new CreateProductCommand(new ProductService()));
         commands.put("product/all", new GetAllProductsCommand(new ProductService()));
@@ -52,6 +59,8 @@ public class Servlet extends HttpServlet {
         commands.put("receipt/view", new ViewReceiptDetailsCommand(new ReceiptService()));
         commands.put("receipt/product/delete", new DeleteProductFromReceipt(new ReceiptService()));
 
+        log.debug("Commands was successfully initialized");
+        log.trace("Number of commands --> " + commands.size());
     }
 
     public void doGet(HttpServletRequest request,
@@ -68,18 +77,23 @@ public class Servlet extends HttpServlet {
     private void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String path = request.getRequestURI();
-        System.out.println(path);
-        path = path.replaceAll(".*/app/", "");
-        System.out.println(path);
+        log.debug("Controller starts");
 
-        Command command = commands.getOrDefault(path,
-                (r) -> "/home.jsp)");
+        String path = request.getRequestURI();
+        path = path.replaceAll(".*/app/", "");
+        log.trace("Requested command:" + path);
+
+        Command command = commands.getOrDefault(path, (r) -> "/home.jsp)");
+
         String page = command.execute(request);
+        log.trace("Response from command:" + page);
+
         if (page.contains("redirect:")) {
             response.sendRedirect(page.replace("redirect:", request.getContextPath()));
+            log.debug("Controller finished, now go to redirect address --> " + page);
         } else {
             request.getRequestDispatcher(page).forward(request, response);
+            log.debug("Controller finished, now go to forward address --> " + page);
         }
     }
 }
