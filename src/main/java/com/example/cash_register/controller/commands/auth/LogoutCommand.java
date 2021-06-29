@@ -1,6 +1,7 @@
 package com.example.cash_register.controller.commands.auth;
 
 import com.example.cash_register.controller.commands.Command;
+import com.example.cash_register.controller.commands.CommandUtility;
 import com.example.cash_register.model.enums.Roles;
 import org.apache.log4j.Logger;
 
@@ -20,8 +21,7 @@ public class LogoutCommand implements Command {
         String login = (String) request.getSession().getAttribute("login");
         loggedUsers.remove(login);
 
-        request.getSession().removeAttribute("login");
-        request.getSession().setAttribute("role", Roles.GUEST);
+        CommandUtility.removeUserRole(request);
         log.debug("Command finished");
         return "redirect:/home.jsp";
     }

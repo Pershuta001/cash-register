@@ -56,10 +56,12 @@
                     <fmt:message key="login"/>
                 </a>
             </c:if>
-            <a class="nav-item nav-link active" href="?sessionLocale=en">
+            <a class="nav-item nav-link active"
+               href="?date=${requestScope.date}&id=${requestScope.receipt.id}&page=${requestScope.page}&sort=${requestScope.sort}&sessionLocale=en">
                 <fmt:message key="lang.en"/>
             </a>
-            <a class="nav-item nav-link active" href="?sessionLocale=ua">
+            <a class="nav-item nav-link active"
+               href="?date=${requestScope.date}&id=${requestScope.receipt.id}&page=${requestScope.page}&sort=${requestScope.sort}&sessionLocale=ua">
                 <fmt:message key="lang.ua"/>
             </a>
 

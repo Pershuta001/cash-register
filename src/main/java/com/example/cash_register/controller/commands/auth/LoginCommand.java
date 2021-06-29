@@ -46,11 +46,12 @@ public class LoginCommand implements Command {
         if (!isLoginValid(login)) {
             request.setAttribute("exception", "Wrong login format");
             log.error("Invalid login parameter obtained");
-            return "/WEB-INF/exception.jsp";
+            return "/login.jsp";
         }
 
         Optional<User> userOpt = userService.getUserByLoginAndPassword(login, password);
         if (!userOpt.isPresent()) {
+            request.setAttribute("exception", "Wrong credentials");
             log.error(String.format("No user with credentials: login = '%s' and password = '%s'", login, password));
             return "/login.jsp";
         }

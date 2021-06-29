@@ -11,7 +11,9 @@
 <%@include file="/WEB-INF/jspf/head.jspf" %>
 
 <body>
-
+<%
+    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+%>
 <%@include file="/WEB-INF/jspf/header.jspf" %>
 
 <h1><fmt:message key="receipt.id"/>: ${requestScope.receipt.id}</h1>
@@ -26,65 +28,19 @@
             <thead>
             <tr>
                 <th>
-                    <c:if test="${requestScope.sort != 'byId'}">
-                        <a href="?page=1&sort=byId">
-                            <fmt:message key="product.id"/>
-                        </a>
-                    </c:if>
-                    <c:if test="${requestScope.sort == 'byId'}">
-                        <a href="?page=1&sort=byIdReverse">
-                            <fmt:message key="product.id"/>
-                        </a>
-                    </c:if>
+                    <fmt:message key="product.id"/>
                 </th>
                 <th>
-                    <c:if test="${requestScope.sort != 'byAlphabet'}">
-                        <a href="?page=1&sort=byAlphabet">
-                            <fmt:message key="product.name"/>
-                        </a>
-                    </c:if>
-                    <c:if test="${requestScope.sort == 'byAlphabet'}">
-                        <a href="?page=1&sort=byAlphabetReverse">
-                            <fmt:message key="product.name"/>
-                        </a>
-                    </c:if>
+                    <fmt:message key="product.name"/>
                 </th>
                 <th>
-                    <c:if test="${requestScope.sort != 'fromCheep'}">
-                        <a href="?page=1&sort=fromCheep">
-                            <fmt:message key="product.price"/>
-                        </a>
-                    </c:if>
-                    <c:if test="${requestScope.sort == 'fromCheep'}">
-                        <a href="?page=1&sort=fromExpensive">
-                            <fmt:message key="product.price"/>
-                        </a>
-                    </c:if>
+                    <fmt:message key="product.price"/>
                 </th>
                 <th>
-                    <c:if test="${requestScope.sort != 'byAmount'}">
-                        <a href="?page=1&sort=byAmount">
-                            <fmt:message key="product.amount"/>
-                        </a>
-                    </c:if>
-                    <c:if test="${requestScope.sort == 'byAmount'}">
-                        <a href="?page=1&sort=byAmountReverse">
-                            <fmt:message key="product.amount"/>
-                        </a>
-                    </c:if>
+                    <fmt:message key="product.amount"/>
                 </th>
-
                 <th>
-                    <c:if test="${requestScope.sort != 'byAmount'}">
-                        <a href="?page=1&sort=byAmount">
-                            <fmt:message key="product.amount"/>
-                        </a>
-                    </c:if>
-                    <c:if test="${requestScope.sort == 'byAmount'}">
-                        <a href="?page=1&sort=byAmountReverse">
-                            <fmt:message key="product.amount"/>
-                        </a>
-                    </c:if>
+                    <fmt:message key="product.amount"/>
                 </th>
             </tr>
             </thead>
@@ -119,7 +75,7 @@
                     </td>
                     <td>
                         <a href="${pageContext.request.contextPath}/app/receipt/product/delete?productId=${product.getKey().id}&receiptId=${requestScope.receipt.id}">
-                            <fmt:message key ="receipt.delete"/>
+                            <fmt:message key="receipt.delete"/>
                         </a>
                     </td>
                 </tr>

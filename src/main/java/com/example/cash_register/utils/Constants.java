@@ -2,7 +2,7 @@ package com.example.cash_register.utils;
 
 public class Constants {
 
-    public final static int PAGE_SIZE = 10;
+    public final static int PAGE_SIZE = 5;
 
     public static final String NAME_REG_EX = "^[a-zA-Zа-яА-ЯіІїЇґҐєЄ \\d]{1,28}$";
     public static final String PRICE_REG_EX = "^([\\d]{1,5}([\\.][\\d]{1,2})?)";

@@ -63,6 +63,7 @@ public class CreateProductCommand implements Command {
             setAttributes(request);
             request.setAttribute("error", e.getMessage());
             log.error(e.getMessage());
+            return "/commodity_expert/create_product.jsp";
         }
         log.debug("Command finished");
         return "redirect:/app/product/create";

@@ -50,6 +50,9 @@ public class GetZReportCommand implements Command {
 
         log.info("Executed with parameter: " + sort);
         request.setAttribute("sort", sort);
+        request.setAttribute("page", page);
+        request.setAttribute("date", date);
+        request.setAttribute("pagesCount", receiptService.getZPagesCount('z' + sort, Date.valueOf(date)));
 
         log.debug("Command finished");
         return "/cashier_manager/z_report.jsp";

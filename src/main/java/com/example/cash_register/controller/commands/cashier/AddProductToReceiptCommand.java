@@ -46,7 +46,7 @@ public class AddProductToReceiptCommand implements Command {
         }
 
         Long id = Long.parseLong(receiptId);
-        Optional<Receipt> currentReceipt = receiptService.getReceiptById(id);
+        Optional<Receipt> currentReceipt;
         try {
             receiptService.addProductInReceipt(
                     id,
@@ -64,7 +64,10 @@ public class AddProductToReceiptCommand implements Command {
                 default:
                     request.setAttribute("unknown error", e.getMessage());
             }
+            request.setAttribute("name", productNameOrId);
+            request.setAttribute("amount", amount);
             log.error(e.getMessage());
+            return "/app/receipt/create";
         }
 
         request.setAttribute("receipt", currentReceipt.get());

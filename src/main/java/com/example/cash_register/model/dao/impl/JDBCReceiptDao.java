@@ -20,6 +20,18 @@ import java.util.Optional;
 
 public class JDBCReceiptDao implements ReceiptDao {
 
+    private static final String COUNT_Z_PRODUCTS =
+            "SELECT count(distinct product_id) " +
+                    "from z_report_receipt_product" +
+                    " INNER JOIN z_report_receipts zrr on zrr.id = z_report_receipt_product.receipt_id" +
+                    " WHERE date = ?";
+
+    private static final String COUNT_Z_CASHIERS =
+            "SELECT count(distinct cashier_id) " +
+                    "from z_report_receipts " +
+                    " WHERE date = ?";
+    private final Connection connection;
+
     private static final String GET_ALL_RECEIPTS_ID =
             "SELECT id, cashier_id, date FROM receipts WHERE date IS NOT NULL";
 
@@ -40,7 +52,18 @@ public class JDBCReceiptDao implements ReceiptDao {
             "group by zrrp.name, zrrp.price,zrrp.product_id \n" +
             "LIMIT ? OFFSET ?;";
 
-    private final Connection connection;
+    private static final String COUNT_ALL_ACTIVE_RECEIPTS =
+            "SELECT count(*) from receipts WHERE date IS NOT NULL ";
+
+    private static final String COUNT_ALL_ACTIVE_CASHIERS =
+            "SELECT count( distinct cashier_id) from receipts WHERE date IS NOT NULL ";
+
+    private static final String COUNT_ALL_ACTIVE_PRODUCTS =
+            "SELECT count( distinct product_id )" +
+                    " from receipt_product" +
+                    " WHERE receipt_id IN (" +
+                    "SELECT receipt_id from receipts WHERE date IS NOT NULL" +
+                    ") ";
 
     private static final String DELETE_RECEIPT_BY_ID = "DELETE FROM receipts WHERE id = ?";
 
@@ -443,6 +466,57 @@ public class JDBCReceiptDao implements ReceiptDao {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+        return res;
+    }
+
+    @Override
+    public int getPagesCount(String param) {
+        Statement stmt;
+        ResultSet rs;
+        int res = 0;
+        try {
+            stmt = connection.createStatement();
+            switch (param) {
+                case "cashiers":
+                    rs = stmt.executeQuery(COUNT_ALL_ACTIVE_CASHIERS);
+                    break;
+                case "products":
+                    rs = stmt.executeQuery(COUNT_ALL_ACTIVE_PRODUCTS);
+                    break;
+                default:
+                    rs = stmt.executeQuery(COUNT_ALL_ACTIVE_RECEIPTS);
+            }
+
+            if (rs.next())
+                res = rs.getInt(1);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        res = res / Constants.PAGE_SIZE + (res % Constants.PAGE_SIZE == 0 ? 0 : 1);
+        return res;
+    }
+
+    @Override
+    public int getZPagesCount(String param, Date date) {
+        PreparedStatement stmt;
+        ResultSet rs;
+        int res = 0;
+        try {
+            switch (param) {
+                case "zproducts":
+                    stmt = connection.prepareStatement(COUNT_Z_PRODUCTS);
+                    break;
+                default:
+                    stmt = connection.prepareStatement(COUNT_Z_CASHIERS);
+            }
+            stmt.setDate(1, date);
+            rs = stmt.executeQuery();
+            if (rs.next())
+                res = rs.getInt(1);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        res = res / Constants.PAGE_SIZE + (res % Constants.PAGE_SIZE == 0 ? 0 : 1);
         return res;
     }
 

@@ -11,7 +11,9 @@
 <%@include file="/WEB-INF/jspf/head.jspf" %>
 
 <body>
-
+<%
+    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+%>
 <%@include file="/WEB-INF/jspf/header.jspf" %>
 <jsp:useBean id="convertor"
              class="com.example.cash_register.utils.Convertor"/>

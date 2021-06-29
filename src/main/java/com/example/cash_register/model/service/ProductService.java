@@ -4,6 +4,7 @@ import com.example.cash_register.controller.exceptions.ExistingProductNameExcept
 import com.example.cash_register.model.dao.DaoFactory;
 import com.example.cash_register.model.dao.ProductDao;
 import com.example.cash_register.model.entity.Product;
+import org.apache.log4j.Logger;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -11,11 +12,13 @@ import java.util.Optional;
 
 public class ProductService {
     private final DaoFactory repository = DaoFactory.getInstance();
+    private final Logger log = Logger.getLogger(ProductService.class);
 
     public final Product createProduct(Product product) {
         try (ProductDao productDao = repository.createProductDao()) {
             productDao.create(product);
-        }catch (SQLException e){
+        } catch (SQLException e) {
+            log.error("Product with this name '" + product.getName() + "' already exists");
             throw new ExistingProductNameException("Product with this name already exists");
         }
         return product;
@@ -26,6 +29,7 @@ public class ProductService {
         List<Product> res;
         try (ProductDao productDao = repository.createProductDao()) {
             res = productDao.findAll(page, sortParam);
+            log.debug("found products by page");
         }
         return res;
     }
@@ -34,6 +38,7 @@ public class ProductService {
         int res;
         try (ProductDao productDao = repository.createProductDao()) {
             res = productDao.getPagesCount();
+            log.debug("count number of pages");
         }
         return res;
     }
@@ -41,6 +46,7 @@ public class ProductService {
     public void deleteProduct(Long id) {
         try (ProductDao productDao = repository.createProductDao()) {
             productDao.delete(id);
+            log.debug("Product with id '" + id + "' was deleted");
         }
     }
 
@@ -48,34 +54,19 @@ public class ProductService {
         Optional<Product> product;
         try (ProductDao productDao = repository.createProductDao()) {
             product = productDao.findById(id);
-        }
-        return product;
-    }
-    public Optional<Product> findByName(String name) {
-        Optional<Product> product;
-        try (ProductDao productDao = repository.createProductDao()) {
-            product = productDao.findByNameOrId(name);
+            log.debug("Attempt to find product with id '" + id + "'");
         }
         return product;
     }
 
     public void updateAmount(boolean byWeight, String amount, Long id) {
         try (ProductDao productDao = repository.createProductDao()) {
-            if (byWeight)
-                productDao.updateWeight(Double.parseDouble(amount),id );
-            else
+            log.debug("Attempt to update product amount by id '" + id + "'");
+            if (byWeight) {
+                productDao.updateWeight(Double.parseDouble(amount), id);
+            } else {
                 productDao.updateQuantity(Integer.parseInt(amount), id);
+            }
         }
-
-    }
-
-    public Optional<Product> findByNameOrId(String nameOrId) {
-        Optional<Product> product;
-        try{
-            product = findById(Long.parseLong(nameOrId));
-        } catch (NumberFormatException e) {
-            product = findByName(nameOrId);
-        }
-        return product;
     }
 }

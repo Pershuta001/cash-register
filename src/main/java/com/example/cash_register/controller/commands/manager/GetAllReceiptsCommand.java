@@ -43,9 +43,8 @@ public class GetAllReceiptsCommand implements Command {
 
         Integer page = pageParam == null ? 1 : Integer.parseInt(pageParam);
 
-
-        //request.setAttribute("pagesCount", productService.getPagesCount());
         List<Receipt> receiptList = receiptService.findAll(page);
+        request.setAttribute("pagesCount", receiptService.getPagesCount("receipts"));
         request.setAttribute("receipts", receiptList);
         request.setAttribute("page", page);
 

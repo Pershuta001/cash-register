@@ -120,4 +120,16 @@ public class ReceiptService {
             return receiptDao.getZReportByCashiers(date, page);
         }
     }
+
+    public int getPagesCount(String param) {
+        try(ReceiptDao receiptDao = repository.createReceiptDao()){
+            return receiptDao.getPagesCount(param);
+        }
+    }
+
+    public int getZPagesCount( String param, Date date) {
+        try(ReceiptDao receiptDao = repository.createReceiptDao()){
+            return receiptDao.getZPagesCount(param, date);
+        }
+    }
 }

@@ -9,7 +9,9 @@
 <%@include file="/WEB-INF/jspf/head.jspf" %>
 
 <body>
-
+<%
+    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+%>
 <%@include file="/WEB-INF/jspf/header.jspf" %>
 
 <h1><fmt:message key="product.create"/></h1>

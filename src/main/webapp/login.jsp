@@ -9,6 +9,9 @@
 <%@include file="/WEB-INF/jspf/head.jspf" %>
 
 <body>
+<%
+    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+%>
 
 <%@include file="/WEB-INF/jspf/header.jspf" %>
 
@@ -32,6 +35,13 @@
                name="password"
         >
     </div>
+    <c:if test="${not empty requestScope.exception}">
+        <div>
+            <label style="color:red;">
+                    ${requestScope.exception}
+            </label>
+        </div>
+    </c:if>
     <button type="submit" class="btn btn-primary">
         <fmt:message key="login"/>
     </button>

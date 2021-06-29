@@ -9,6 +9,9 @@
 <%@include file="/WEB-INF/jspf/head.jspf" %>
 
 <body>
+<%
+    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+%>
 
 <%@include file="/WEB-INF/jspf/header.jspf" %>
 
@@ -55,15 +58,15 @@
     </div>
 </div>
 <div>
-    <%--    <%--%>
-    <%--        Integer currentPage = (Integer) request.getAttribute("page");--%>
-    <%--        Integer pagesCount = (Integer) request.getAttribute("pagesCount");--%>
+    <%
+        Integer currentPage = (Integer) request.getAttribute("page");
+        Integer pagesCount = (Integer) request.getAttribute("pagesCount");
 
-    <%--        if (currentPage > 1)--%>
-    <%--            out.println("<a href=\"?page=" + (currentPage - 1) + "&sort=" + request.getAttribute("sort") + "\">Prev</a>");--%>
-    <%--        if (currentPage < pagesCount)--%>
-    <%--            out.println("<a href=\"?page=" + ((Integer) request.getAttribute("page") + 1) + "&sort=" + request.getAttribute("sort") + "\">Next</a>");--%>
-    <%--    %>--%>
+        if (currentPage > 1)
+            out.println("<a href=\"?page=" + (currentPage - 1) + "\">Prev</a>");
+        if (currentPage < pagesCount)
+            out.println("<a href=\"?page=" + ((Integer) request.getAttribute("page") + 1) + "\">Next</a>");
+    %>
 </div>
 <jsp:include page="/WEB-INF/jspf/footer.jspf"/>
 

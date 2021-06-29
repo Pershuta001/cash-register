@@ -9,6 +9,9 @@
 <%@include file="/WEB-INF/jspf/head.jspf" %>
 
 <body>
+<%
+    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+%>
 <jsp:useBean id="convertor"
              class="com.example.cash_register.utils.Convertor"/>
 <%@include file="/WEB-INF/jspf/header.jspf" %>
@@ -37,6 +40,12 @@
                            id="name"
                            name="name"
                            pattern="[a-zA-Zа-яА-Я0-9]{1,30}"
+                    <c:if test="${not empty requestScope.name}">
+                           value="${requestScope.name}"
+                    </c:if>
+                    <c:if test="${not empty requestScope.nameError}">
+                           style="color: red"
+                    </c:if>
                            required
                     >
                 </div>
@@ -45,19 +54,22 @@
                             ${requestScope.nameError}
                     </div>
                 </c:if>
-
                 <div>
                     <label for="amount">
                         <fmt:message key="product.amount"/>
                     </label>
-
                     <input type="text"
                            id="amount"
                            name="amount"
-                           pattern="[0-9]{1,5}[\.]?[0-9]{0,3}"
+                           pattern="^([\d]{1,5}([\.][\d]{1,3})?)$"
+                    <c:if test="${not empty requestScope.amount}">
+                           value="${requestScope.amount}"
+                    </c:if>
+                    <c:if test="${not empty requestScope.amountError}">
+                           style="color: red"
+                    </c:if>
                            required
                     >
-
                 </div>
                 <c:if test="${not empty requestScope.amountError}">
                     <div style="color: red">
@@ -81,7 +93,6 @@
                 </tr>
                 </thead>
                 <tbody>
-
                 <c:forEach items="${requestScope.receipt.productsInReceipt.entrySet()}" var="product">
                     <tr>
                         <td>${product.getKey().id}</td>
@@ -141,27 +152,8 @@
                     </b>
                 </div>
             </div>
-
         </c:if>
     </div>
-    <div>
-
-    </div>
-</div>
-<div>
-    <%--    <%--%>
-    <%--        Integer currentPage = (Integer) request.getAttribute("page");--%>
-    <%--        Integer pagesCount = (Integer) request.getAttribute("pagesCount");--%>
-
-    <%--        --%>
-    <%--        --%>
-    <%--        if (currentPage > 1)--%>
-    <%--            out.println("<a href=\"?page=" + (currentPage - 1) + "&sort=" + request.getAttribute("sort")--%>
-    <%--                    + "\">Prev</a>");--%>
-    <%--        if (currentPage < pagesCount)--%>
-    <%--            out.println("<a href=\"?page=" + ((Integer) request.getAttribute("page") + 1) +--%>
-    <%--                    "&sort=" + request.getAttribute("sort") + "\">Next</a>");--%>
-    <%--    %>--%>
 </div>
 <jsp:include page="/WEB-INF/jspf/footer.jspf"/>
 

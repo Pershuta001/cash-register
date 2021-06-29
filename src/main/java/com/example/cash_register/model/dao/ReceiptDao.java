@@ -33,4 +33,8 @@ public interface ReceiptDao extends BaseDao<Receipt> {
     List<ReportByProductsView> getZReportByProducts(Date date, int page);
 
     List<ReportByCashiersView> getZReportByCashiers(Date date, int page);
+
+    int getPagesCount(String param);
+
+    int getZPagesCount(String param, Date date);
 }

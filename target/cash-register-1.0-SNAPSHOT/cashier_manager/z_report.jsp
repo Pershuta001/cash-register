@@ -11,7 +11,9 @@
 <%@include file="/WEB-INF/jspf/head.jspf" %>
 
 <body>
-
+<%
+    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+%>
 <%@include file="/WEB-INF/jspf/header.jspf" %>
 
 <h1><fmt:message key="product.products"/></h1>
@@ -45,7 +47,7 @@
 </form>
 <div>
 
-    <table cellspacing="2" border="1" cellpadding="5" width="600" id="table">
+    <table cellspacing="2" border="1" cellpadding="5" width="900" id="table">
         <c:choose>
             <c:when test="${requestScope.sort == 'products'}">
                 <thead>
@@ -118,6 +120,17 @@
         </c:choose>
     </table>
 
+    <div>
+        <%
+            Integer currentPage = (Integer) request.getAttribute("page");
+            Integer pagesCount = (Integer) request.getAttribute("pagesCount");
+
+            if (currentPage != null && currentPage > 1)
+                out.println("<a href=\"?page=" + (currentPage - 1) + "&sort=" + request.getAttribute("sort") + "&date=" + request.getAttribute("date") + "\">Prev</a>");
+            if (currentPage != null && pagesCount != null && currentPage < pagesCount)
+                out.println("<a href=\"?page=" + ((Integer) request.getAttribute("page") + 1) + "&sort=" + request.getAttribute("sort") + "&date=" + request.getAttribute("date") + "\">Next</a>");
+        %>
+    </div>
     <jsp:include page="/WEB-INF/jspf/footer.jspf"/>
 
 </body>
