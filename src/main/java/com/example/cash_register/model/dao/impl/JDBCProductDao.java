@@ -9,7 +9,7 @@ import java.sql.*;
 import java.util.List;
 import java.util.Optional;
 
-import static java.sql.Types.*;
+import static java.sql.Types.NULL;
 
 public class JDBCProductDao implements ProductDao {
 
@@ -85,7 +85,7 @@ public class JDBCProductDao implements ProductDao {
     }
 
     @Override
-    public void create(Product entity) throws SQLException {
+    public Product create(Product entity) throws SQLException {
         PreparedStatement stmt;
         ResultSet resultSet;
         try {
@@ -103,7 +103,6 @@ public class JDBCProductDao implements ProductDao {
                 stmt.setInt(3, entity.getAvailableQuantity());
             }
             stmt.executeUpdate();
-            connection.commit();
             resultSet = stmt.getGeneratedKeys();
             if (resultSet.next()) {
                 entity.setId(resultSet.getLong(1));
@@ -112,8 +111,9 @@ public class JDBCProductDao implements ProductDao {
             DBUtils.rollback(connection);
             throw new SQLException("Creating product failed");
         } finally {
-            close();
+            DBUtils.commit(connection);
         }
+        return entity;
     }
 
     @Override
@@ -137,11 +137,11 @@ public class JDBCProductDao implements ProductDao {
     }
 
     @Override
-    public List<Product> findAll(Integer page, String sortParam) {
+    public List<Product> findAll(Integer page, String sortParam) throws SQLException {
         PreparedStatement stmt;
         ResultSet rs;
         ProductMapper mapper = new ProductMapper();
-        List<Product> res = null;
+        List<Product> res;
         try {
             switch (sortParam) {
                 case "fromCheep":
@@ -173,47 +173,42 @@ public class JDBCProductDao implements ProductDao {
             rs = stmt.executeQuery();
             res = mapper.extractListFromResultSet(rs);
         } catch (SQLException throwables) {
-            throwables.printStackTrace();
+            throw new SQLException(throwables.getMessage());
         }
         return res;
     }
 
 
-    public List<Product> findAll(Integer page) {
+    public List<Product> findAll(Integer page) throws SQLException {
         PreparedStatement stmt;
         ResultSet rs;
         ProductMapper mapper = new ProductMapper();
-        List<Product> res = null;
+        List<Product> res;
         try {
             stmt = connection.prepareStatement(FIND_ALL_BY_ID);
             stmt.setInt(1, (page - 1) * 10);
             rs = stmt.executeQuery();
             res = mapper.extractListFromResultSet(rs);
         } catch (SQLException throwables) {
-            throwables.printStackTrace();
+            throw new SQLException(throwables.getMessage());
         }
         return res;
     }
 
     @Override
-    public void update(Product entity) {
-
-    }
-
-    @Override
-    public void delete(Long id) {
+    public void delete(Long id) throws SQLException {
         PreparedStatement stmt;
         try {
             stmt = connection.prepareStatement(DELETE_PRODUCT);
             stmt.setLong(1, id);
             stmt.executeUpdate();
         } catch (SQLException throwables) {
-            throwables.printStackTrace();
+            throw new SQLException(throwables.getMessage());
         }
     }
 
     @Override
-    public int getPagesCount() {
+    public int getPagesCount() throws SQLException {
         Statement stmt;
         ResultSet rs;
         int res = 0;
@@ -223,14 +218,14 @@ public class JDBCProductDao implements ProductDao {
             if (rs.next())
                 res = rs.getInt(1);
         } catch (SQLException throwables) {
-            throwables.printStackTrace();
+            throw new SQLException(throwables.getMessage());
         }
         res = res / Constants.PAGE_SIZE + (res % Constants.PAGE_SIZE == 0 ? 0 : 1);
         return res;
     }
 
     @Override
-    public void updateWeight(double weight, Long id) {
+    public void updateWeight(double weight, Long id) throws SQLException {
         PreparedStatement stmt;
         try {
             stmt = connection.prepareStatement(UPDATE_PRODUCT_WEIGHT);
@@ -238,25 +233,25 @@ public class JDBCProductDao implements ProductDao {
             stmt.setLong(2, id);
             stmt.executeUpdate();
         } catch (SQLException throwables) {
-            throwables.printStackTrace();
+            throw new SQLException(throwables.getMessage());
         }
     }
 
     @Override
-    public void updateQuantity(int quantity, Long id) {
+    public void updateQuantity(int quantity, Long id) throws SQLException {
         PreparedStatement stmt;
         try {
             stmt = connection.prepareStatement(UPDATE_PRODUCT_QUANTITY);
-            stmt.setDouble(1, quantity);
+            stmt.setInt(1, quantity);
             stmt.setLong(2, id);
             stmt.executeUpdate();
         } catch (SQLException throwables) {
-            throwables.printStackTrace();
+            throw new SQLException(throwables.getMessage());
         }
     }
 
     @Override
-    public Optional<Product> findByNameOrId(String name) {
+    public Optional<Product> findByNameOrId(String name) throws SQLException {
         PreparedStatement stmt;
         ResultSet rs;
         ProductMapper mapper = new ProductMapper();
@@ -275,7 +270,7 @@ public class JDBCProductDao implements ProductDao {
                 res = Optional.of(mapper.extractFromResultSet(rs));
             }
         } catch (SQLException throwables) {
-            throwables.printStackTrace();
+            throw new SQLException(throwables.getMessage());
         }
         return res;
     }

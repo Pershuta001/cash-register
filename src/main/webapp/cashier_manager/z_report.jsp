@@ -22,14 +22,24 @@
 <form action="?page=1" method="get">
     <div>
         <select name="sort">
-            <option value="cashiers">
+            <option value="cashiers"
+                    <c:if test="${requestScope.sort == 'cashiers'}">
+                        selected
+                    </c:if>>
                 <fmt:message key="report.cashiers"/>
             </option>
-            <option value="products">
+            <option value="products"
+                    <c:if test="${requestScope.sort == 'products'}">
+                        selected
+                    </c:if>>
                 <fmt:message key="report.product"/>
             </option>
         </select>
-        <input id="date" type="date" name="date" value="">
+        <input id="date" type="date" name="date"
+        <c:if test="${not empty requestScope.date}">
+                value="${requestScope.date}"
+        </c:if>
+        >
     </div>
     <div>
         <button type="submit">
@@ -37,9 +47,6 @@
         </button>
     </div>
 </form>
-<script>
-    document.getElementById('date').valueAsDate = new Date();
-</script>
 <form action="${pageContext.request.contextPath}/app/manager/init/z-report" method="post">
     <button type="submit">
         <fmt:message key="report.make.z"/>

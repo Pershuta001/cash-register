@@ -162,8 +162,8 @@ public class JDBCReceiptDao implements ReceiptDao {
     }
 
     @Override
-    public void create(Receipt entity) {
-
+    public Receipt create(Receipt entity) {
+        return entity;
     }
 
     @Override
@@ -639,11 +639,6 @@ public class JDBCReceiptDao implements ReceiptDao {
         } finally {
             DBUtils.commit(connection);
         }
-    }
-
-    @Override
-    public void update(Receipt entity) {
-
     }
 
     @Override

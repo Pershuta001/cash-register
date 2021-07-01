@@ -1,5 +1,6 @@
 package com.example.cash_register.model.service;
 
+import com.example.cash_register.controller.exceptions.NoSuchReceiptException;
 import com.example.cash_register.controller.view.ReportByCashiersView;
 import com.example.cash_register.controller.view.ReportByProductsView;
 import com.example.cash_register.model.dao.DaoFactory;
@@ -7,6 +8,7 @@ import com.example.cash_register.model.dao.ReceiptDao;
 import com.example.cash_register.model.entity.Receipt;
 
 import java.sql.Date;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,9 +52,11 @@ public class ReceiptService {
     }
 
     public List<Receipt> findAll(Integer page) {
-        List<Receipt> res;
+        List<Receipt> res = null;
         try (ReceiptDao receiptDao = repository.createReceiptDao()) {
             res = receiptDao.findAll(page);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
         return res;
     }
@@ -81,6 +85,8 @@ public class ReceiptService {
     public void deleteReceipt(Long id) {
         try (ReceiptDao receiptDao = repository.createReceiptDao()) {
             receiptDao.delete(id);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
     }
 
@@ -88,7 +94,6 @@ public class ReceiptService {
         try (ReceiptDao receiptDao = repository.createReceiptDao()) {
             return receiptDao.findById(id);
         }
-
     }
 
     public void deleteProductFromReceipt(Long receiptId, Long productId) {

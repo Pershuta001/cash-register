@@ -20,6 +20,7 @@ public class ProductService {
         } catch (SQLException e) {
             log.error("Product with this name '" + product.getName() + "' already exists");
             throw new ExistingProductNameException("Product with this name already exists");
+
         }
         return product;
     }
@@ -30,6 +31,8 @@ public class ProductService {
         try (ProductDao productDao = repository.createProductDao()) {
             res = productDao.findAll(page, sortParam);
             log.debug("found products by page");
+        } catch (SQLException throwables) {
+            throw new RuntimeException(throwables.getMessage());
         }
         return res;
     }
@@ -39,6 +42,8 @@ public class ProductService {
         try (ProductDao productDao = repository.createProductDao()) {
             res = productDao.getPagesCount();
             log.debug("count number of pages");
+        } catch (SQLException throwables) {
+            throw new RuntimeException(throwables.getMessage());
         }
         return res;
     }
@@ -47,6 +52,8 @@ public class ProductService {
         try (ProductDao productDao = repository.createProductDao()) {
             productDao.delete(id);
             log.debug("Product with id '" + id + "' was deleted");
+        } catch (SQLException throwables) {
+            throw new IllegalArgumentException(throwables.getMessage());
         }
     }
 
@@ -67,6 +74,8 @@ public class ProductService {
             } else {
                 productDao.updateQuantity(Integer.parseInt(amount), id);
             }
+        } catch (SQLException throwables) {
+            throw new IllegalArgumentException(throwables.getMessage());
         }
     }
 }

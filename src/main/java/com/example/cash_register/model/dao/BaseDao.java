@@ -6,17 +6,15 @@ import java.util.Optional;
 
 public interface BaseDao<E> extends AutoCloseable {
 
-    void create(E entity) throws SQLException;
+    E create(E entity) throws SQLException;
 
     Optional<E> findById(Long id);
 
-    List<E> findAll(Integer page, String sortParam);
+    List<E> findAll(Integer page, String sortParam) throws SQLException;
 
-    List<E> findAll(Integer page);
+    List<E> findAll(Integer page) throws SQLException;
 
-    void update(E entity);
-
-    void delete(Long id);
+    void delete(Long id) throws SQLException;
 
     void close();
 }
